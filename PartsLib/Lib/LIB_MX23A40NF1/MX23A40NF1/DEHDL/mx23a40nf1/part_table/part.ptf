@@ -1,0 +1,11 @@
+FILE_TYPE = MULTI_PHYS_TABLE;
+
+PART 'MX23A40NF1'
+CLASS = IO
+{========================================================================================}
+:"MANUFACTURER_NAME", "MANUFACTURER_PART_NUMBER"= "PART_NUMBER", "JEDEC_TYPE", "PACK_TYPE", "MOUSER_PART_NUMBER", "MOUSER_PRICE/STOCK", "DESCRIPTION", "DATASHEET", "HEIGHT";
+{========================================================================================}
+ "JAE", "MX23A40NF1" (!) = "", "MX23A40NF1", "Other", "656-MX23A40NF1", "https://www.mouser.co.uk/ProductDetail/JAE-Electronics/MX23A40NF1?qs=zwT864VV%2FIP%252BlXbBtrhgQg%3D%3D", "Compact automotive Connector, Low profil, Double fin structure, 040 contacts, waterproof, board-to-cable application, 40 pos., Right angle Pin header", "https://www.jae.com/direct/topics/topics_file_download/topics_id=64777&ext_no=06&_lang=en&v=", "18.9 mm"
+END_PART
+
+END.

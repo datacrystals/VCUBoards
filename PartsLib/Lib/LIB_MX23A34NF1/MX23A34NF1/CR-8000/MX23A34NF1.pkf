@@ -1,0 +1,10 @@
+(unit MM)
+
+(package "MX23A34NF1"
+    (type UNDEF)
+    (uver 2)
+    (mountForm default
+        (footprintRef "MX23A34NF1")
+        (spec "default")
+    )
+)

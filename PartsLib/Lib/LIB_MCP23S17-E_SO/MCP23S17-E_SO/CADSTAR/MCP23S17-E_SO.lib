@@ -1,0 +1,16 @@
+.MCP23S17-E_SO :1 ;16-bit I/O Expander,SPI,MCP23S17-E/SO
+SOIC127P1030X265-28N
+*STM IC
+*NGS
+*PLB 1="GPB0" 2="GPB1" 3="GPB2" 4="GPB3" 5="GPB4" 6="GPB5" 7="GPB6" 8="GPB7" 9="VDD" 10="VSS" 11="'CS'" 12="SCK" 13="SI" 14="SO" 15="A0" 16="A1" 17="A2" 18="'RESET'" 19="INTB" 20="INTA" 21="GPA0" 22="GPA1" 23="GPA2" 24="GPA3" 25="GPA4" 26="GPA5" 27="GPA6" 28="GPA7"
+*MXP 28
+*DFN MCP23S17-E_SO
+~!Mouser Part Number (579-MCP23S17-E/SO)
+~!Link Mouser Price/Stock (https://www.mouser.co.uk/ProductDetail/Microchip-Technology/MCP23S17-E-SO?qs=usxtMOJb1RzJScThsWtScg%3D%3D)
+~!Manufacturer_Name (Microchip)
+~!Manufacturer_Part_Number (MCP23S17-E/SO)
+~!Link Datasheet (https://datasheet.datasheetarchive.com/originals/distributors/SFDatasheet-4/sf-00090057.pdf)
+~!Height (2.65mm)
+~!3D_Model (MCP23S17-E_SO)
+MCP23S17-E_SO
+1.1!U 2.1!U 3.1!U 4.1!U 5.1!U 6.1!U 7.1!U 8.1!U 9.1!U 10.1!U 11.1!U 12.1!U 13.1!U 14.1!U 28.1!U 27.1!U 26.1!U 25.1!U 24.1!U 23.1!U 22.1!U 21.1!U 20.1!U 19.1!U 18.1!U 17.1!U 16.1!U 15.1!U 

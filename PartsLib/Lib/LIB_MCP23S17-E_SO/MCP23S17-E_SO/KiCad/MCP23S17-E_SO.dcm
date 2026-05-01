@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP MCP23S17-E_SO
+D 16-bit I/O Expander,SPI,MCP23S17-E/SO
+K
+F https://datasheet.datasheetarchive.com/originals/distributors/SFDatasheet-4/sf-00090057.pdf
+$ENDCMP
+#
+#End Doc Library

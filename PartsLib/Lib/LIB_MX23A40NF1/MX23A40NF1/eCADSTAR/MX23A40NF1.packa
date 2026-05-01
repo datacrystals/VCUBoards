@@ -1,0 +1,13 @@
+(unit MM)
+
+(package "MX23A40NF1"
+    (type UNDEF)
+    (uver 2)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (utime 2019-02-22-13:08:46)
+    (mountForm default
+        (footprintRef "MX23A40NF1")
+        (spec "System")
+    )
+)
