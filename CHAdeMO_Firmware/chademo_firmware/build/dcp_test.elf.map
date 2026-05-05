@@ -3327,89 +3327,90 @@ LOAD /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eab
                 0x1000039c       0x68 CMakeFiles/dcp_test.dir/chademo_hal.c.o
                 0x1000039c                hal_gpio_init
  .text.hal_gpio_set_dcp
-                0x10000404        0xc CMakeFiles/dcp_test.dir/chademo_hal.c.o
+                0x10000404        0x8 CMakeFiles/dcp_test.dir/chademo_hal.c.o
                 0x10000404                hal_gpio_set_dcp
  .text.hal_gpio_read_ss1
-                0x10000410        0xc CMakeFiles/dcp_test.dir/chademo_hal.c.o
-                0x10000410                hal_gpio_read_ss1
+                0x1000040c        0xc CMakeFiles/dcp_test.dir/chademo_hal.c.o
+                0x1000040c                hal_gpio_read_ss1
  .text.hal_gpio_read_ss2
-                0x1000041c        0xc CMakeFiles/dcp_test.dir/chademo_hal.c.o
-                0x1000041c                hal_gpio_read_ss2
+                0x10000418        0xc CMakeFiles/dcp_test.dir/chademo_hal.c.o
+                0x10000418                hal_gpio_read_ss2
  .text.hal_gpio_read_pp
-                0x10000428        0xc CMakeFiles/dcp_test.dir/chademo_hal.c.o
-                0x10000428                hal_gpio_read_pp
+                0x10000424        0xc CMakeFiles/dcp_test.dir/chademo_hal.c.o
+                0x10000424                hal_gpio_read_pp
  .text.hal_millis
-                0x10000434       0x24 CMakeFiles/dcp_test.dir/chademo_hal.c.o
-                0x10000434                hal_millis
+                0x10000430       0x24 CMakeFiles/dcp_test.dir/chademo_hal.c.o
+                0x10000430                hal_millis
  .text.gpio_set_pulls
-                0x10000458       0x28 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
-                0x10000458                gpio_set_pulls
+                0x10000454       0x28 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
+                0x10000454                gpio_set_pulls
  .text.gpio_init
-                0x10000480       0x48 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
-                0x10000480                gpio_init
- .text.panic    0x100004c8       0x30 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_platform_panic/panic.c.o
-                0x100004c8                panic
+                0x1000047c       0x48 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
+                0x1000047c                gpio_init
+ .text.panic    0x100004c4       0x30 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_platform_panic/panic.c.o
+                0x100004c4                panic
  .text.hw_claim_or_assert
-                0x100004f8       0x58 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
-                0x100004f8                hw_claim_or_assert
+                0x100004f4       0x58 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
+                0x100004f4                hw_claim_or_assert
  .text.hw_claim_unused_from_range
-                0x10000550       0x80 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
-                0x10000550                hw_claim_unused_from_range
+                0x1000054c       0x80 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
+                0x1000054c                hw_claim_unused_from_range
  .text.next_striped_spin_lock_num
-                0x100005d0       0x18 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
-                0x100005d0                next_striped_spin_lock_num
+                0x100005cc       0x18 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
+                0x100005cc                next_striped_spin_lock_num
  .text.spin_lock_claim_unused
-                0x100005e8       0x20 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
-                0x100005e8                spin_lock_claim_unused
+                0x100005e4       0x20 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
+                0x100005e4                spin_lock_claim_unused
  .text.spinlock_set_extexclall
-                0x10000608       0x10 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+                0x10000604       0x10 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
  .text.spin_locks_reset
-                0x10000618       0x18 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
-                0x10000618                spin_locks_reset
+                0x10000614       0x18 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+                0x10000614                spin_locks_reset
  .text.runtime_init_per_core_irq_priorities
-                0x10000630       0x1c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x10000630                runtime_init_per_core_irq_priorities
+                0x1000062c       0x1c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x1000062c                runtime_init_per_core_irq_priorities
  .text.irq_set_enabled
-                0x1000064c       0x2c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x1000064c                irq_set_enabled
+                0x10000648       0x2c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x10000648                irq_set_enabled
  .text.irq_is_enabled
-                0x10000678       0x20 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x10000678                irq_is_enabled
+                0x10000674       0x20 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x10000674                irq_is_enabled
  .text.irq_set_pending
-                0x10000698       0x18 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x10000698                irq_set_pending
+                0x10000694       0x18 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x10000694                irq_set_pending
  .text.irq_has_shared_handler
-                0x100006b0       0x20 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x100006b0                irq_has_shared_handler
+                0x100006ac       0x20 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x100006ac                irq_has_shared_handler
  .text.irq_set_exclusive_handler
-                0x100006d0       0x60 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x100006d0                irq_set_exclusive_handler
+                0x100006cc       0x60 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x100006cc                irq_set_exclusive_handler
  .text.irq_add_shared_handler
-                0x10000730      0x1e8 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x10000730                irq_add_shared_handler
+                0x1000072c      0x1e8 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x1000072c                irq_add_shared_handler
  .text.irq_add_tail_to_free_list
-                0x10000918       0xa8 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x10000918                irq_add_tail_to_free_list
+                0x10000914       0xa8 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x10000914                irq_add_tail_to_free_list
  .text.user_irq_claim_unused
-                0x100009c0       0x28 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x100009c0                user_irq_claim_unused
+                0x100009bc       0x28 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x100009bc                user_irq_claim_unused
  .text.lock_init
-                0x100009e8        0xc CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/lock_core.c.o
-                0x100009e8                lock_init
+                0x100009e4        0xc CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/lock_core.c.o
+                0x100009e4                lock_init
  .text.runtime_init_mutex
-                0x100009f4       0x50 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
-                0x100009f4                runtime_init_mutex
+                0x100009f0       0x50 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
+                0x100009f0                runtime_init_mutex
  .text.mutex_init
-                0x10000a44       0x1c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
-                0x10000a44                mutex_init
+                0x10000a40       0x1c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
+                0x10000a40                mutex_init
  .text.critical_section_init
-                0x10000a60       0x1c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
-                0x10000a60                critical_section_init
+                0x10000a5c       0x1c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
+                0x10000a5c                critical_section_init
  .text.critical_section_init_with_lock_num
-                0x10000a7c       0x10 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
-                0x10000a7c                critical_section_init_with_lock_num
+                0x10000a78       0x10 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
+                0x10000a78                critical_section_init_with_lock_num
  .text.sleep_until_callback
-                0x10000a8c       0x3c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_time/time.c.o
+                0x10000a88       0x3c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_time/time.c.o
+ *fill*         0x10000ac4        0x4 
  .text.alarm_pool_irq_handler
                 0x10000ac8      0x2e0 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_time/time.c.o
  .text.runtime_init_default_alarm_pool
@@ -4668,52 +4669,52 @@ LOAD linker stubs
  .comment       0x00000043       0x44 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memset.o)
  .comment       0x00000043       0x44 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
 
-.debug_info     0x00000000    0x31aef
+.debug_info     0x00000000    0x31af0
  .debug_info    0x00000000      0x643 CMakeFiles/dcp_test.dir/dcp_test_main.c.o
- .debug_info    0x00000643     0x3170 CMakeFiles/dcp_test.dir/chademo_hal.c.o
- .debug_info    0x000037b3     0x2366 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
- .debug_info    0x00005b19      0x1be CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_platform_panic/panic.c.o
- .debug_info    0x00005cd7      0xb78 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
- .debug_info    0x0000684f      0x46f CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
- .debug_info    0x00006cbe     0x145e CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
- .debug_info    0x0000811c     0x2603 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
- .debug_info    0x0000a71f      0x187 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/lock_core.c.o
- .debug_info    0x0000a8a6     0x1e7c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
- .debug_info    0x0000c722      0x389 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
- .debug_info    0x0000caab     0x3a44 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_time/time.c.o
- .debug_info    0x000104ef     0x2b64 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_timer/timer.c.o
- .debug_info    0x00013053     0x1d2c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.o
- .debug_info    0x00014d7f      0x507 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_pll/pll.c.o
- .debug_info    0x00015286      0xba9 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c.o
- .debug_info    0x00015e2f      0x26c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_ticks/ticks.c.o
- .debug_info    0x0001609b      0x894 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.o
- .debug_info    0x0001692f      0x1c4 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom_lock.c.o
- .debug_info    0x00016af3      0x316 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_boot_lock/boot_lock.c.o
- .debug_info    0x00016e09      0x1b1 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.o
- .debug_info    0x00016fba      0x21a CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime/runtime.c.o
- .debug_info    0x000171d4     0x1bcd CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init.c.o
- .debug_info    0x00018da1      0x7c9 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
- .debug_info    0x0001956a       0x23 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_double/double_aeabi_dcp.S.o
- .debug_info    0x0001958d      0x2b8 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
- .debug_info    0x00019845     0x1b11 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_printf/printf.c.o
- .debug_info    0x0001b356       0x23 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_crt0/crt0.S.o
- .debug_info    0x0001b379      0xbdf CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_clib_interface/newlib_interface.c.o
- .debug_info    0x0001bf58     0x1769 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio/stdio.c.o
- .debug_info    0x0001d6c1      0xb12 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/reset_interface.c.o
- .debug_info    0x0001e1d3     0x1f67 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb.c.o
- .debug_info    0x0002013a      0x72b CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb_descriptors.c.o
- .debug_info    0x00020865      0x2b7 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_unique_id/unique_id.c.o
- .debug_info    0x00020b1c     0x2ae8 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/dcd_rp2040.c.o
- .debug_info    0x00023604     0x1271 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/rp2040_usb.c.o
- .debug_info    0x00024875     0x4a72 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd.c.o
- .debug_info    0x000292e7      0xb92 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd_control.c.o
- .debug_info    0x00029e79     0x1f9c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/cdc/cdc_device.c.o
- .debug_info    0x0002be15     0x178d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/vendor/vendor_device.c.o
- .debug_info    0x0002d5a2     0x1e06 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/tusb.c.o
- .debug_info    0x0002f3a8     0x2522 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/common/tusb_fifo.c.o
- .debug_info    0x000318ca      0x135 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memset.o)
- .debug_info    0x000319ff       0x33 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memcpy.o)
- .debug_info    0x00031a32       0xbd /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
+ .debug_info    0x00000643     0x3171 CMakeFiles/dcp_test.dir/chademo_hal.c.o
+ .debug_info    0x000037b4     0x2366 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
+ .debug_info    0x00005b1a      0x1be CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_platform_panic/panic.c.o
+ .debug_info    0x00005cd8      0xb78 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
+ .debug_info    0x00006850      0x46f CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
+ .debug_info    0x00006cbf     0x145e CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+ .debug_info    0x0000811d     0x2603 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+ .debug_info    0x0000a720      0x187 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/lock_core.c.o
+ .debug_info    0x0000a8a7     0x1e7c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
+ .debug_info    0x0000c723      0x389 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
+ .debug_info    0x0000caac     0x3a44 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_time/time.c.o
+ .debug_info    0x000104f0     0x2b64 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_timer/timer.c.o
+ .debug_info    0x00013054     0x1d2c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.o
+ .debug_info    0x00014d80      0x507 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_pll/pll.c.o
+ .debug_info    0x00015287      0xba9 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c.o
+ .debug_info    0x00015e30      0x26c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_ticks/ticks.c.o
+ .debug_info    0x0001609c      0x894 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.o
+ .debug_info    0x00016930      0x1c4 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom_lock.c.o
+ .debug_info    0x00016af4      0x316 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_boot_lock/boot_lock.c.o
+ .debug_info    0x00016e0a      0x1b1 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.o
+ .debug_info    0x00016fbb      0x21a CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime/runtime.c.o
+ .debug_info    0x000171d5     0x1bcd CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init.c.o
+ .debug_info    0x00018da2      0x7c9 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
+ .debug_info    0x0001956b       0x23 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+ .debug_info    0x0001958e      0x2b8 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+ .debug_info    0x00019846     0x1b11 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_printf/printf.c.o
+ .debug_info    0x0001b357       0x23 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_crt0/crt0.S.o
+ .debug_info    0x0001b37a      0xbdf CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+ .debug_info    0x0001bf59     0x1769 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio/stdio.c.o
+ .debug_info    0x0001d6c2      0xb12 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/reset_interface.c.o
+ .debug_info    0x0001e1d4     0x1f67 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb.c.o
+ .debug_info    0x0002013b      0x72b CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb_descriptors.c.o
+ .debug_info    0x00020866      0x2b7 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_unique_id/unique_id.c.o
+ .debug_info    0x00020b1d     0x2ae8 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/dcd_rp2040.c.o
+ .debug_info    0x00023605     0x1271 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/rp2040_usb.c.o
+ .debug_info    0x00024876     0x4a72 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd.c.o
+ .debug_info    0x000292e8      0xb92 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd_control.c.o
+ .debug_info    0x00029e7a     0x1f9c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/cdc/cdc_device.c.o
+ .debug_info    0x0002be16     0x178d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/vendor/vendor_device.c.o
+ .debug_info    0x0002d5a3     0x1e06 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/tusb.c.o
+ .debug_info    0x0002f3a9     0x2522 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/common/tusb_fifo.c.o
+ .debug_info    0x000318cb      0x135 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memset.o)
+ .debug_info    0x00031a00       0x33 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memcpy.o)
+ .debug_info    0x00031a33       0xbd /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
 
 .debug_abbrev   0x00000000     0x91a7
  .debug_abbrev  0x00000000      0x299 CMakeFiles/dcp_test.dir/dcp_test_main.c.o
@@ -4763,87 +4764,87 @@ LOAD linker stubs
  .debug_abbrev  0x0000912f       0x78 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
 
 .debug_loclists
-                0x00000000    0x15511
+                0x00000000    0x154d7
  .debug_loclists
                 0x00000000      0x14e CMakeFiles/dcp_test.dir/dcp_test_main.c.o
  .debug_loclists
-                0x0000014e     0x143a CMakeFiles/dcp_test.dir/chademo_hal.c.o
+                0x0000014e     0x1400 CMakeFiles/dcp_test.dir/chademo_hal.c.o
  .debug_loclists
-                0x00001588     0x1419 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
+                0x0000154e     0x1419 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
  .debug_loclists
-                0x000029a1      0x42d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
+                0x00002967      0x42d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
  .debug_loclists
-                0x00002dce      0x132 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
+                0x00002d94      0x132 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
  .debug_loclists
-                0x00002f00       0xa2 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+                0x00002ec6       0xa2 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
  .debug_loclists
-                0x00002fa2      0xf7d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x00002f68      0xf7d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
  .debug_loclists
-                0x00003f1f       0x17 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/lock_core.c.o
+                0x00003ee5       0x17 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/lock_core.c.o
  .debug_loclists
-                0x00003f36      0xade CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
+                0x00003efc      0xade CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
  .debug_loclists
-                0x00004a14       0x8c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
+                0x000049da       0x8c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
  .debug_loclists
-                0x00004aa0     0x18cb CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_time/time.c.o
+                0x00004a66     0x18cb CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_time/time.c.o
  .debug_loclists
-                0x0000636b     0x161e CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_timer/timer.c.o
+                0x00006331     0x161e CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_timer/timer.c.o
  .debug_loclists
-                0x00007989     0x10c8 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.o
+                0x0000794f     0x10c8 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.o
  .debug_loclists
-                0x00008a51      0x197 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_pll/pll.c.o
+                0x00008a17      0x197 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_pll/pll.c.o
  .debug_loclists
-                0x00008be8      0x533 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c.o
+                0x00008bae      0x533 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c.o
  .debug_loclists
-                0x0000911b       0x8b CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_ticks/ticks.c.o
+                0x000090e1       0x8b CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_ticks/ticks.c.o
  .debug_loclists
-                0x000091a6      0x46f CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.o
+                0x0000916c      0x46f CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.o
  .debug_loclists
-                0x00009615       0x28 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom_lock.c.o
+                0x000095db       0x28 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom_lock.c.o
  .debug_loclists
-                0x0000963d       0x78 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_boot_lock/boot_lock.c.o
+                0x00009603       0x78 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_boot_lock/boot_lock.c.o
  .debug_loclists
-                0x000096b5       0x48 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.o
+                0x0000967b       0x48 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.o
  .debug_loclists
-                0x000096fd       0x7e CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime/runtime.c.o
+                0x000096c3       0x7e CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime/runtime.c.o
  .debug_loclists
-                0x0000977b      0x10a CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x00009741      0x10a CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init.c.o
  .debug_loclists
-                0x00009885       0x74 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
+                0x0000984b       0x74 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
  .debug_loclists
-                0x000098f9     0x2703 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_printf/printf.c.o
+                0x000098bf     0x2703 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_printf/printf.c.o
  .debug_loclists
-                0x0000bffc      0x408 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+                0x0000bfc2      0x408 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_clib_interface/newlib_interface.c.o
  .debug_loclists
-                0x0000c404      0x797 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio/stdio.c.o
+                0x0000c3ca      0x797 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio/stdio.c.o
  .debug_loclists
-                0x0000cb9b      0x256 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/reset_interface.c.o
+                0x0000cb61      0x256 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/reset_interface.c.o
  .debug_loclists
-                0x0000cdf1      0x6ce CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb.c.o
+                0x0000cdb7      0x6ce CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb.c.o
  .debug_loclists
-                0x0000d4bf       0xfb CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb_descriptors.c.o
+                0x0000d485       0xfb CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb_descriptors.c.o
  .debug_loclists
-                0x0000d5ba       0xf8 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_unique_id/unique_id.c.o
+                0x0000d580       0xf8 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_unique_id/unique_id.c.o
  .debug_loclists
-                0x0000d6b2     0x15e6 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/dcd_rp2040.c.o
+                0x0000d678     0x15e6 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/dcd_rp2040.c.o
  .debug_loclists
-                0x0000ec98      0x564 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/rp2040_usb.c.o
+                0x0000ec5e      0x564 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/rp2040_usb.c.o
  .debug_loclists
-                0x0000f1fc     0x2164 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd.c.o
+                0x0000f1c2     0x2164 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd.c.o
  .debug_loclists
-                0x00011360      0x433 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd_control.c.o
+                0x00011326      0x433 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd_control.c.o
  .debug_loclists
-                0x00011793      0xd2c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/cdc/cdc_device.c.o
+                0x00011759      0xd2c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/cdc/cdc_device.c.o
  .debug_loclists
-                0x000124bf      0x756 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/vendor/vendor_device.c.o
+                0x00012485      0x756 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/vendor/vendor_device.c.o
  .debug_loclists
-                0x00012c15      0xdb2 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/tusb.c.o
+                0x00012bdb      0xdb2 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/tusb.c.o
  .debug_loclists
-                0x000139c7     0x197e CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/common/tusb_fifo.c.o
+                0x0001398d     0x197e CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/common/tusb_fifo.c.o
  .debug_loclists
-                0x00015345      0x1a3 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memset.o)
+                0x0001530b      0x1a3 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memset.o)
  .debug_loclists
-                0x000154e8       0x29 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
+                0x000154ae       0x29 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
 
 .debug_aranges  0x00000000     0x13d0
  .debug_aranges
@@ -4938,140 +4939,140 @@ LOAD linker stubs
                 0x000013b0       0x20 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
 
 .debug_rnglists
-                0x00000000     0x3aed
+                0x00000000     0x3ae1
  .debug_rnglists
                 0x00000000       0x3c CMakeFiles/dcp_test.dir/dcp_test_main.c.o
  .debug_rnglists
-                0x0000003c      0x354 CMakeFiles/dcp_test.dir/chademo_hal.c.o
+                0x0000003c      0x348 CMakeFiles/dcp_test.dir/chademo_hal.c.o
  .debug_rnglists
-                0x00000390      0x55a CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
+                0x00000384      0x55a CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
  .debug_rnglists
-                0x000008ea       0x19 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_platform_panic/panic.c.o
+                0x000008de       0x19 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_platform_panic/panic.c.o
  .debug_rnglists
-                0x00000903       0xf2 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
+                0x000008f7       0xf2 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
  .debug_rnglists
-                0x000009f5       0x5b CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
+                0x000009e9       0x5b CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
  .debug_rnglists
-                0x00000a50       0x43 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+                0x00000a44       0x43 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
  .debug_rnglists
-                0x00000a93      0x3f0 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x00000a87      0x3f0 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
  .debug_rnglists
-                0x00000e83       0x13 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/lock_core.c.o
+                0x00000e77       0x13 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/lock_core.c.o
  .debug_rnglists
-                0x00000e96      0x2a9 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
+                0x00000e8a      0x2a9 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
  .debug_rnglists
-                0x0000113f       0x3a CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
+                0x00001133       0x3a CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
  .debug_rnglists
-                0x00001179      0x503 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_time/time.c.o
+                0x0000116d      0x503 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_time/time.c.o
  .debug_rnglists
-                0x0000167c      0x40f CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_timer/timer.c.o
+                0x00001670      0x40f CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_timer/timer.c.o
  .debug_rnglists
-                0x00001a8b      0x2b9 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.o
+                0x00001a7f      0x2b9 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.o
  .debug_rnglists
-                0x00001d44       0x59 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_pll/pll.c.o
+                0x00001d38       0x59 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_pll/pll.c.o
  .debug_rnglists
-                0x00001d9d      0x176 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c.o
+                0x00001d91      0x176 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c.o
  .debug_rnglists
-                0x00001f13       0x2b CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_ticks/ticks.c.o
+                0x00001f07       0x2b CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_ticks/ticks.c.o
  .debug_rnglists
-                0x00001f3e       0x82 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.o
+                0x00001f32       0x82 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.o
  .debug_rnglists
-                0x00001fc0       0x13 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom_lock.c.o
+                0x00001fb4       0x13 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom_lock.c.o
  .debug_rnglists
-                0x00001fd3       0x4f CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_boot_lock/boot_lock.c.o
+                0x00001fc7       0x4f CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_boot_lock/boot_lock.c.o
  .debug_rnglists
-                0x00002022       0x2b CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.o
+                0x00002016       0x2b CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.o
  .debug_rnglists
-                0x0000204d       0x3d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime/runtime.c.o
+                0x00002041       0x3d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime/runtime.c.o
  .debug_rnglists
-                0x0000208a       0x70 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x0000207e       0x70 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init.c.o
  .debug_rnglists
-                0x000020fa       0x2c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
+                0x000020ee       0x2c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
  .debug_rnglists
-                0x00002126       0xb7 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+                0x0000211a       0xb7 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_double/double_aeabi_dcp.S.o
  .debug_rnglists
-                0x000021dd      0x1ab CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_printf/printf.c.o
+                0x000021d1      0x1ab CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_printf/printf.c.o
  .debug_rnglists
-                0x00002388       0x1b CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_crt0/crt0.S.o
+                0x0000237c       0x1b CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_crt0/crt0.S.o
  .debug_rnglists
-                0x000023a3       0xaf CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+                0x00002397       0xaf CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_clib_interface/newlib_interface.c.o
  .debug_rnglists
-                0x00002452      0x21d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio/stdio.c.o
+                0x00002446      0x21d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio/stdio.c.o
  .debug_rnglists
-                0x0000266f       0x43 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/reset_interface.c.o
+                0x00002663       0x43 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/reset_interface.c.o
  .debug_rnglists
-                0x000026b2      0x234 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb.c.o
+                0x000026a6      0x234 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb.c.o
  .debug_rnglists
-                0x000028e6       0x2b CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb_descriptors.c.o
+                0x000028da       0x2b CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb_descriptors.c.o
  .debug_rnglists
-                0x00002911       0x2e CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_unique_id/unique_id.c.o
+                0x00002905       0x2e CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_unique_id/unique_id.c.o
  .debug_rnglists
-                0x0000293f      0x399 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/dcd_rp2040.c.o
+                0x00002933      0x399 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/dcd_rp2040.c.o
  .debug_rnglists
-                0x00002cd8       0xda CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/rp2040_usb.c.o
+                0x00002ccc       0xda CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/rp2040_usb.c.o
  .debug_rnglists
-                0x00002db2      0x5b3 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd.c.o
+                0x00002da6      0x5b3 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd.c.o
  .debug_rnglists
-                0x00003365       0x63 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd_control.c.o
+                0x00003359       0x63 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd_control.c.o
  .debug_rnglists
-                0x000033c8      0x16d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/cdc/cdc_device.c.o
+                0x000033bc      0x16d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/cdc/cdc_device.c.o
  .debug_rnglists
-                0x00003535      0x10d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/vendor/vendor_device.c.o
+                0x00003529      0x10d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/vendor/vendor_device.c.o
  .debug_rnglists
-                0x00003642      0x1f2 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/tusb.c.o
+                0x00003636      0x1f2 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/tusb.c.o
  .debug_rnglists
-                0x00003834      0x292 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/common/tusb_fifo.c.o
+                0x00003828      0x292 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/common/tusb_fifo.c.o
  .debug_rnglists
-                0x00003ac6       0x14 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memset.o)
+                0x00003aba       0x14 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memset.o)
  .debug_rnglists
-                0x00003ada       0x13 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
+                0x00003ace       0x13 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
 
-.debug_line     0x00000000    0x1ca6b
+.debug_line     0x00000000    0x1ca61
  .debug_line    0x00000000      0x4e0 CMakeFiles/dcp_test.dir/dcp_test_main.c.o
- .debug_line    0x000004e0     0x1273 CMakeFiles/dcp_test.dir/chademo_hal.c.o
- .debug_line    0x00001753     0x17a6 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
- .debug_line    0x00002ef9      0x270 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_platform_panic/panic.c.o
- .debug_line    0x00003169      0x7b6 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
- .debug_line    0x0000391f      0x3f4 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
- .debug_line    0x00003d13      0x370 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
- .debug_line    0x00004083     0x1544 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
- .debug_line    0x000055c7      0x246 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/lock_core.c.o
- .debug_line    0x0000580d     0x121f CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
- .debug_line    0x00006a2c      0x38a CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
- .debug_line    0x00006db6     0x2035 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_time/time.c.o
- .debug_line    0x00008deb     0x19c5 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_timer/timer.c.o
- .debug_line    0x0000a7b0     0x1084 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.o
- .debug_line    0x0000b834      0x495 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_pll/pll.c.o
- .debug_line    0x0000bcc9      0x932 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c.o
- .debug_line    0x0000c5fb      0x2fe CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_ticks/ticks.c.o
- .debug_line    0x0000c8f9      0x5f7 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.o
- .debug_line    0x0000cef0      0x36d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom_lock.c.o
- .debug_line    0x0000d25d      0x3ef CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_boot_lock/boot_lock.c.o
- .debug_line    0x0000d64c      0x330 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.o
- .debug_line    0x0000d97c      0x2f7 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime/runtime.c.o
- .debug_line    0x0000dc73      0x592 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init.c.o
- .debug_line    0x0000e205      0x522 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
- .debug_line    0x0000e727      0x28f CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_double/double_aeabi_dcp.S.o
- .debug_line    0x0000e9b6      0x1dd CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
- .debug_line    0x0000eb93     0x1812 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_printf/printf.c.o
- .debug_line    0x000103a5       0xa1 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_crt0/crt0.S.o
- .debug_line    0x00010446      0x7df CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_clib_interface/newlib_interface.c.o
- .debug_line    0x00010c25     0x1040 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio/stdio.c.o
- .debug_line    0x00011c65      0x4c6 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/reset_interface.c.o
- .debug_line    0x0001212b     0x10ae CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb.c.o
- .debug_line    0x000131d9      0x389 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb_descriptors.c.o
- .debug_line    0x00013562      0x3a5 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_unique_id/unique_id.c.o
- .debug_line    0x00013907     0x15ff CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/dcd_rp2040.c.o
- .debug_line    0x00014f06      0xb8c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/rp2040_usb.c.o
- .debug_line    0x00015a92     0x252a CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd.c.o
- .debug_line    0x00017fbc      0x682 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd_control.c.o
- .debug_line    0x0001863e      0xe5b CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/cdc/cdc_device.c.o
- .debug_line    0x00019499      0x9e9 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/vendor/vendor_device.c.o
- .debug_line    0x00019e82     0x111c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/tusb.c.o
- .debug_line    0x0001af9e     0x167d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/common/tusb_fifo.c.o
- .debug_line    0x0001c61b      0x223 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memset.o)
- .debug_line    0x0001c83e       0xbd /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memcpy.o)
- .debug_line    0x0001c8fb      0x170 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
+ .debug_line    0x000004e0     0x1269 CMakeFiles/dcp_test.dir/chademo_hal.c.o
+ .debug_line    0x00001749     0x17a6 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
+ .debug_line    0x00002eef      0x270 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_platform_panic/panic.c.o
+ .debug_line    0x0000315f      0x7b6 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
+ .debug_line    0x00003915      0x3f4 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
+ .debug_line    0x00003d09      0x370 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+ .debug_line    0x00004079     0x1544 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+ .debug_line    0x000055bd      0x246 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/lock_core.c.o
+ .debug_line    0x00005803     0x121f CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
+ .debug_line    0x00006a22      0x38a CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
+ .debug_line    0x00006dac     0x2035 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/common/pico_time/time.c.o
+ .debug_line    0x00008de1     0x19c5 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_timer/timer.c.o
+ .debug_line    0x0000a7a6     0x1084 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.o
+ .debug_line    0x0000b82a      0x495 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_pll/pll.c.o
+ .debug_line    0x0000bcbf      0x932 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c.o
+ .debug_line    0x0000c5f1      0x2fe CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_ticks/ticks.c.o
+ .debug_line    0x0000c8ef      0x5f7 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.o
+ .debug_line    0x0000cee6      0x36d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom_lock.c.o
+ .debug_line    0x0000d253      0x3ef CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_boot_lock/boot_lock.c.o
+ .debug_line    0x0000d642      0x330 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.o
+ .debug_line    0x0000d972      0x2f7 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime/runtime.c.o
+ .debug_line    0x0000dc69      0x592 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init.c.o
+ .debug_line    0x0000e1fb      0x522 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
+ .debug_line    0x0000e71d      0x28f CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+ .debug_line    0x0000e9ac      0x1dd CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+ .debug_line    0x0000eb89     0x1812 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_printf/printf.c.o
+ .debug_line    0x0001039b       0xa1 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_crt0/crt0.S.o
+ .debug_line    0x0001043c      0x7df CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+ .debug_line    0x00010c1b     0x1040 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio/stdio.c.o
+ .debug_line    0x00011c5b      0x4c6 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/reset_interface.c.o
+ .debug_line    0x00012121     0x10ae CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb.c.o
+ .debug_line    0x000131cf      0x389 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb_descriptors.c.o
+ .debug_line    0x00013558      0x3a5 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_unique_id/unique_id.c.o
+ .debug_line    0x000138fd     0x15ff CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/dcd_rp2040.c.o
+ .debug_line    0x00014efc      0xb8c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/rp2040_usb.c.o
+ .debug_line    0x00015a88     0x252a CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd.c.o
+ .debug_line    0x00017fb2      0x682 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd_control.c.o
+ .debug_line    0x00018634      0xe5b CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/cdc/cdc_device.c.o
+ .debug_line    0x0001948f      0x9e9 CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/vendor/vendor_device.c.o
+ .debug_line    0x00019e78     0x111c CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/tusb.c.o
+ .debug_line    0x0001af94     0x167d CMakeFiles/dcp_test.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/common/tusb_fifo.c.o
+ .debug_line    0x0001c611      0x223 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memset.o)
+ .debug_line    0x0001c834       0xbd /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memcpy.o)
+ .debug_line    0x0001c8f1      0x170 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
 
 .debug_str      0x00000000     0x955e
  .debug_str     0x00000000     0x955e CMakeFiles/dcp_test.dir/dcp_test_main.c.o

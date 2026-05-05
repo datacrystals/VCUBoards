@@ -242,6 +242,7 @@ void chademo_fsm_set_battery_temp(chademo_context_t *ctx, uint16_t temp_C);
 /** Set target charge parameters (from BMS) */
 void chademo_fsm_set_target_voltage(chademo_context_t *ctx, uint16_t voltage_V);
 void chademo_fsm_set_target_current(chademo_context_t *ctx, uint8_t current_A);
+void chademo_fsm_set_min_voltage(chademo_context_t *ctx, uint16_t min_voltage_V);
 void chademo_fsm_set_max_voltage(chademo_context_t *ctx, uint16_t max_voltage_V);
 void chademo_fsm_set_capacity_kwh(chademo_context_t *ctx, uint16_t capacity_100wh);
 

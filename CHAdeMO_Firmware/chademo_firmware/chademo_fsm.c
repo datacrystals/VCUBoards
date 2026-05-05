@@ -45,18 +45,20 @@ static void reset_tx_defaults(chademo_context_t *ctx)
 #if IS_VEHICLE
     /* Conservative defaults so the charger sees a valid vehicle.
      * Override these in your app with real battery parameters. */
-    ctx->tx.h100.max_battery_voltage_V  = 500;  /* 500 V max (bench test) */
-    ctx->tx.h100.charged_rate_ref_const = 100;  /* 100% = 0x64 */
-    ctx->tx.h101.max_charge_time_10s    = 30;   /* 300 s = 5 min */
-    ctx->tx.h101.max_charge_time_60s    = 90;   /* 90 min default */
-    ctx->tx.h101.est_charge_time_60s    = 60;   /* 60 min estimate */
-    ctx->tx.h101.total_capacity_100wh   = 400;  /* 40.0 kWh */
-    ctx->tx.h102.protocol_number        = CHADEMO_PROTOCOL_V1_0;
-    ctx->tx.h102.target_battery_voltage_V = 450; /* 450 V target (bench test) */
-    ctx->tx.h102.charging_current_request_A = 10; /* 10 A request */
-    ctx->tx.h102.fault                  = 0;
-    ctx->tx.h102.status                 = CHADEMO_EV_STATUS_CONTACTOR_OPEN;
-    ctx->tx.h102.charged_rate_percent   = 20;   /* 20% SOC placeholder */
+    ctx->tx.h100.minimum_charge_current_A  = 1;   /* 1 A min (must be >0) */
+    ctx->tx.h100.minimum_battery_voltage_V = 350; /* 350 V min (realistic for 450V pack) */
+    ctx->tx.h100.max_battery_voltage_V     = 500;  /* 500 V max (bench test) */
+    ctx->tx.h100.charged_rate_ref_const    = 100;  /* 100% = 0x64 */
+    ctx->tx.h101.max_charge_time_10s       = 0xFF; /* Invalid = no limit */
+    ctx->tx.h101.max_charge_time_60s       = 0xFF; /* Invalid = no limit */
+    ctx->tx.h101.est_charge_time_60s       = 60;   /* 60 min estimate */
+    ctx->tx.h101.total_capacity_100wh      = 400;  /* 40.0 kWh */
+    ctx->tx.h102.protocol_number           = CHADEMO_PROTOCOL_V1_0;
+    ctx->tx.h102.target_battery_voltage_V  = 450; /* 450 V target (bench test) */
+    ctx->tx.h102.charging_current_request_A = 2;  /* 2 A request (conservative) */
+    ctx->tx.h102.fault                     = 0;
+    ctx->tx.h102.status                    = CHADEMO_EV_STATUS_CONTACTOR_OPEN;
+    ctx->tx.h102.charged_rate_percent      = 20;   /* 20% SOC placeholder */
 #else
     ctx->tx.h108.welding_detection_support = false;
     ctx->tx.h108.avail_output_voltage_V    = 0;
@@ -120,16 +122,23 @@ static void apply_charger_limits(chademo_context_t *ctx)
         CHADEMO_LOG("LIMITS avail=%uV/%uA thr=%uV pres=%uV/%uA stat=0x%02X",
                     avail_v, avail_i, thr_v, pres_v, pres_i, status);
 
-        /* Warn if battery voltage is below charger threshold */
-        if (thr_v > 0 && ctx->measured_voltage_V > 0 &&
-            ctx->measured_voltage_V < thr_v) {
-            CHADEMO_LOG("WARN batteryV=%u < chargerThr=%u (possible incompatibility)",
-                        ctx->measured_voltage_V, thr_v);
+        /* Threshold voltage is the STOP voltage (max output), NOT a minimum.
+         * It's typically min(vehicle_max_v, charger_avail_v).  A battery
+         * voltage below threshold is NORMAL and REQUIRED. */
+        if (thr_v > 0 && ctx->tx.h100.max_battery_voltage_V > thr_v) {
+            CHADEMO_LOG("WARN maxBattV=%u > chargerThr=%u (charger will stop at threshold)",
+                        ctx->tx.h100.max_battery_voltage_V, thr_v);
         }
         /* Warn if target voltage is above charger max */
         if (ctx->tx.h102.target_battery_voltage_V > avail_v) {
             CHADEMO_LOG("WARN targetV=%u > chargerAvailV=%u",
                         ctx->tx.h102.target_battery_voltage_V, avail_v);
+        }
+        /* Warn if min battery voltage is below a sane level */
+        if (ctx->tx.h100.minimum_battery_voltage_V > 0 &&
+            ctx->tx.h100.minimum_battery_voltage_V < 200) {
+            CHADEMO_LOG("WARN minBattV=%u seems low (<200V)",
+                        ctx->tx.h100.minimum_battery_voltage_V);
         }
     }
 
@@ -272,6 +281,13 @@ void chademo_fsm_set_target_current(chademo_context_t *ctx, uint8_t current_A)
 #endif
 }
 
+void chademo_fsm_set_min_voltage(chademo_context_t *ctx, uint16_t min_voltage_V)
+{
+#if IS_VEHICLE
+    ctx->tx.h100.minimum_battery_voltage_V = min_voltage_V;
+#endif
+}
+
 void chademo_fsm_set_max_voltage(chademo_context_t *ctx, uint16_t max_voltage_V)
 {
 #if IS_VEHICLE
@@ -320,6 +336,25 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
     }
 
     chademo_event_t event = CHADEMO_EVENT_NONE;
+
+    /* ================================================================
+     * GLOBAL PLUG-REMOVAL MONITOR (VEHICLE)
+     * ================================================================
+     * If the plug is pulled at any time, immediately abort and return
+     * to IDLE.  This avoids waiting for CAN timeout after unplug.
+     * ================================================================ */
+#if IS_VEHICLE
+    if (ctx->state != CHADEMO_STATE_IDLE && ctx->state != CHADEMO_STATE_STOPPED) {
+        if (hal_gpio_read_pp()) {
+            CHADEMO_LOG("GLOBAL: PP HIGH — plug removed, aborting");
+            hal_gpio_set_dcp(false);
+            hal_gpio_set_contactor(false);
+            chademo_fsm_init(ctx);
+            event = CHADEMO_EVENT_UNPLUGGED;
+            return event;
+        }
+    }
+#endif
 
     /* ================================================================
      * GLOBAL FAULT MONITORING (checked only during active charge sequence)

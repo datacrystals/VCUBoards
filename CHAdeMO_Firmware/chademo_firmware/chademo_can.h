@@ -46,11 +46,13 @@ typedef struct {
  */
 
 /** --- CAN ID 0x100: Vehicle Charging Parameters ---
- *  Byte:  0      1      2      3      4         5         6       7
- *        [Reserved-------------]  [MaxBattV (LSB)]  [MaxBattV (MSB)]  [Cap]  [Resv]
- *  Scale: max_battery_voltage = 1 V/bit, charged_rate_ref_const = 1%/bit
+ *  Byte:  0          1         2-3                4-5                  6        7
+ *        [MinCurr]  [Resv]  [MinBattV_LSB/MSB]  [MaxBattV_LSB/MSB]  [CapRef]  [Resv]
+ *  Scale: 1 V/bit for voltage, 1 A/bit for current, 1%/bit for capacity ref
  */
 typedef struct {
+    uint8_t  minimum_charge_current_A;  /**< Minimum charge current (1 A/bit) */
+    uint16_t minimum_battery_voltage_V; /**< Minimum battery voltage (1 V/bit) */
     uint16_t max_battery_voltage_V;     /**< Maximum battery voltage (1 V/bit) */
     uint8_t  charged_rate_ref_const;    /**< Pack capacity reference, 100% = 0x64 */
 } __attribute__((packed)) chademo_ev_h100_t;

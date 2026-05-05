@@ -37,23 +37,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
  16 .comment      00000043  00000000  00000000  0000ad94  2**0
                   CONTENTS, READONLY
- 17 .debug_info   00033b8f  00000000  00000000  0000add7  2**0
+ 17 .debug_info   00033b90  00000000  00000000  0000add7  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_abbrev 00009646  00000000  00000000  0003e966  2**0
+ 18 .debug_abbrev 00009646  00000000  00000000  0003e967  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_loclists 000161b2  00000000  00000000  00047fac  2**0
+ 19 .debug_loclists 00016178  00000000  00000000  00047fad  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_aranges 00001450  00000000  00000000  0005e160  2**3
+ 20 .debug_aranges 00001450  00000000  00000000  0005e128  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_rnglists 00003db8  00000000  00000000  0005f5b0  2**0
+ 21 .debug_rnglists 00003dac  00000000  00000000  0005f578  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 22 .debug_line   0001e2c6  00000000  00000000  00063368  2**0
+ 22 .debug_line   0001e2bc  00000000  00000000  00063324  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 23 .debug_str    000097d8  00000000  00000000  0008162e  2**0
+ 23 .debug_str    000097d8  00000000  00000000  000815e0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 24 .debug_frame  0000348c  00000000  00000000  0008ae08  2**2
+ 24 .debug_frame  0000348c  00000000  00000000  0008adb8  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 25 .debug_line_str 000001a2  00000000  00000000  0008e294  2**0
+ 25 .debug_line_str 000001a2  00000000  00000000  0008e244  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 /home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/can_loopback_test.elf:     file format elf32-littlearm

@@ -13,8 +13,10 @@
 void chademo_can_init_rx_vehicle(chademo_rx_vehicle_t *rx)
 {
     memset(rx, 0, sizeof(*rx));
-    rx->h100.max_battery_voltage_V  = 0;
-    rx->h100.charged_rate_ref_const = 100; /* 100% default */
+    rx->h100.minimum_charge_current_A  = 0;
+    rx->h100.minimum_battery_voltage_V = 0;
+    rx->h100.max_battery_voltage_V     = 0;
+    rx->h100.charged_rate_ref_const    = 100; /* 100% default */
     rx->h101.max_charge_time_10s    = 0xFF; /* Invalid */
     rx->h101.max_charge_time_60s    = 0xFF; /* Invalid */
     rx->h101.total_capacity_100wh   = 0;
@@ -61,10 +63,10 @@ void chademo_can_pack_vehicle_frames(const chademo_tx_vehicle_t *tx,
     f       = &frames[0];
     f->id   = CAN_ID_VEH_CHARGER_STATUS;  /* 0x100 */
     f->len  = 8;
-    f->data[0] = 0x00; /* Reserved */
+    f->data[0] = tx->h100.minimum_charge_current_A;
     f->data[1] = 0x00; /* Reserved */
-    f->data[2] = 0x00; /* Reserved */
-    f->data[3] = 0x00; /* Reserved */
+    f->data[2] = (uint8_t)(tx->h100.minimum_battery_voltage_V & 0x00FFU);
+    f->data[3] = (uint8_t)((tx->h100.minimum_battery_voltage_V & 0xFF00U) >> 8);
     f->data[4] = (uint8_t)(tx->h100.max_battery_voltage_V & 0x00FFU);
     f->data[5] = (uint8_t)((tx->h100.max_battery_voltage_V & 0xFF00U) >> 8);
     f->data[6] = tx->h100.charged_rate_ref_const; /* Pack capacity % */
@@ -144,9 +146,12 @@ bool chademo_can_unpack_vehicle_frame(chademo_rx_vehicle_t *rx,
 
     switch (frame->id) {
     case CAN_ID_VEH_CHARGER_STATUS: /* 0x100 */
-        rx->h100.max_battery_voltage_V  = (uint16_t)frame->data[4]
-                                         | ((uint16_t)frame->data[5] << 8);
-        rx->h100.charged_rate_ref_const = frame->data[6];
+        rx->h100.minimum_charge_current_A  = frame->data[0];
+        rx->h100.minimum_battery_voltage_V = (uint16_t)frame->data[2]
+                                            | ((uint16_t)frame->data[3] << 8);
+        rx->h100.max_battery_voltage_V     = (uint16_t)frame->data[4]
+                                            | ((uint16_t)frame->data[5] << 8);
+        rx->h100.charged_rate_ref_const    = frame->data[6];
         rx->h100_valid = true;
         break;
 

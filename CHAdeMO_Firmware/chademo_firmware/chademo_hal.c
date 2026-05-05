@@ -133,9 +133,9 @@ bool hal_gpio_read_dcp(void)
 #else
 void hal_gpio_set_dcp(bool active)
 {
-    /* Inverted drive: GPIO LOW pulls DCP HIGH via external pull-up,
-     * GPIO HIGH pulls DCP LOW via open-collector/open-drain transistor. */
-    gpio_put(PIN_OUT_DCP, active ? 0 : 1);
+    /* DCP polarity test: try non-inverted drive.
+     * GPIO HIGH = DCP HIGH at connector. */
+    gpio_put(PIN_OUT_DCP, active ? 1 : 0);
 }
 
 bool hal_gpio_read_ss1(void)

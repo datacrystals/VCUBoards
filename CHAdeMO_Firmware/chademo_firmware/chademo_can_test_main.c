@@ -204,6 +204,8 @@ int main(void)
     chademo_can_init_rx_charger(&g_rx_charger);
 
     /* ---- Seed TX structures with example values ---- */
+    g_tx_vehicle.h100.minimum_charge_current_A  = 1;     /* 1 A min */
+    g_tx_vehicle.h100.minimum_battery_voltage_V = 300;   /* 300 V min */
     g_tx_vehicle.h100.max_battery_voltage_V     = 402;   /* 402 V max */
     g_tx_vehicle.h100.charged_rate_ref_const    = 100;   /* 100 % */
 
