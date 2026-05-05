@@ -185,9 +185,9 @@ int main(void)
      */
 #if IS_VEHICLE
     /* Bench-test values for 450V-class pack to match charger threshold (402V min) */
-    chademo_fsm_set_min_voltage(&g_fsm_ctx, 350);    /* 350V min (realistic) */
+    chademo_fsm_set_min_voltage(&g_fsm_ctx, 250);    /* 250V min for 300V target */
     chademo_fsm_set_max_voltage(&g_fsm_ctx, 500);    /* 500V max */
-    chademo_fsm_set_target_voltage(&g_fsm_ctx, 450); /* 450V target */
+    chademo_fsm_set_target_voltage(&g_fsm_ctx, 300); /* 300V target test */
     chademo_fsm_set_target_current(&g_fsm_ctx, 2);   /* 2A initial request (charger offers 2A) */
     chademo_fsm_set_capacity_kwh(&g_fsm_ctx, 400);   /* 40.0 kWh pack */
     chademo_fsm_set_battery_soc(&g_fsm_ctx, 20);     /* Starting at 20% SOC */

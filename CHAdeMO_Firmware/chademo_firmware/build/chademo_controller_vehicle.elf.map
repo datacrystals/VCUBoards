@@ -3267,186 +3267,187 @@ LOAD /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eab
  *(EXCLUDE_FILE(*libm.a: *libc.a:*lib_a-mem*.o *libgcc.a:) .text*)
  .text          0x100001f0       0x40 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/thumb/v8-m.main+fp/softfp/crtbegin.o
  .text.startup.main
-                0x10000230      0x748 CMakeFiles/chademo_controller_vehicle.dir/main.c.o
+                0x10000230      0x744 CMakeFiles/chademo_controller_vehicle.dir/main.c.o
                 0x10000230                main
  .text.hal_gpio_init
-                0x10000978       0x68 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
-                0x10000978                hal_gpio_init
+                0x10000974       0x68 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+                0x10000974                hal_gpio_init
  .text.hal_gpio_set_contactor
-                0x100009e0        0x8 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
-                0x100009e0                hal_gpio_set_contactor
+                0x100009dc        0x8 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+                0x100009dc                hal_gpio_set_contactor
  .text.hal_gpio_get_contactor
-                0x100009e8        0xc CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
-                0x100009e8                hal_gpio_get_contactor
+                0x100009e4        0xc CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+                0x100009e4                hal_gpio_get_contactor
  .text.hal_gpio_set_dcp
-                0x100009f4        0x8 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
-                0x100009f4                hal_gpio_set_dcp
+                0x100009f0        0x8 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+                0x100009f0                hal_gpio_set_dcp
  .text.hal_gpio_read_ss1
-                0x100009fc        0xc CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
-                0x100009fc                hal_gpio_read_ss1
+                0x100009f8        0xc CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+                0x100009f8                hal_gpio_read_ss1
  .text.hal_gpio_read_ss2
-                0x10000a08        0xc CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
-                0x10000a08                hal_gpio_read_ss2
+                0x10000a04        0xc CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+                0x10000a04                hal_gpio_read_ss2
  .text.hal_gpio_read_pp
-                0x10000a14        0xc CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
-                0x10000a14                hal_gpio_read_pp
+                0x10000a10        0xc CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+                0x10000a10                hal_gpio_read_pp
  .text.hal_can_read_reg
-                0x10000a20       0x98 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
-                0x10000a20                hal_can_read_reg
+                0x10000a1c       0x98 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+                0x10000a1c                hal_can_read_reg
  .text.hal_can_write_reg
-                0x10000ab8       0x98 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
-                0x10000ab8                hal_can_write_reg
+                0x10000ab4       0x98 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+                0x10000ab4                hal_can_write_reg
  .text.hal_can_bit_modify
-                0x10000b50       0xb4 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
-                0x10000b50                hal_can_bit_modify
+                0x10000b4c       0xb4 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+                0x10000b4c                hal_can_bit_modify
  .text.hal_can_init
-                0x10000c04      0x170 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
-                0x10000c04                hal_can_init
+                0x10000c00      0x170 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+                0x10000c00                hal_can_init
  .text.hal_can_send
-                0x10000d74      0x1e8 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
-                0x10000d74                hal_can_send
+                0x10000d70      0x1e8 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+                0x10000d70                hal_can_send
  .text.hal_can_recv
-                0x10000f5c      0x118 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
-                0x10000f5c                hal_can_recv
+                0x10000f58      0x118 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+                0x10000f58                hal_can_recv
  .text.hal_millis
-                0x10001074       0x24 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
-                0x10001074                hal_millis
+                0x10001070       0x24 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+                0x10001070                hal_millis
  .text.hal_watchdog_feed
-                0x10001098        0x4 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
-                0x10001098                hal_watchdog_feed
+                0x10001094        0x4 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+                0x10001094                hal_watchdog_feed
  .text.hal_watchdog_init
-                0x1000109c       0x18 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
-                0x1000109c                hal_watchdog_init
+                0x10001098       0x18 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+                0x10001098                hal_watchdog_init
  .text.chademo_can_init_rx_charger
-                0x100010b4       0x1c CMakeFiles/chademo_controller_vehicle.dir/chademo_can.c.o
-                0x100010b4                chademo_can_init_rx_charger
+                0x100010b0       0x1c CMakeFiles/chademo_controller_vehicle.dir/chademo_can.c.o
+                0x100010b0                chademo_can_init_rx_charger
  .text.chademo_can_pack_vehicle_frames
-                0x100010d0       0xc0 CMakeFiles/chademo_controller_vehicle.dir/chademo_can.c.o
-                0x100010d0                chademo_can_pack_vehicle_frames
+                0x100010cc       0xc0 CMakeFiles/chademo_controller_vehicle.dir/chademo_can.c.o
+                0x100010cc                chademo_can_pack_vehicle_frames
  .text.chademo_can_unpack_charger_frame
-                0x10001190       0x64 CMakeFiles/chademo_controller_vehicle.dir/chademo_can.c.o
-                0x10001190                chademo_can_unpack_charger_frame
+                0x1000118c       0x64 CMakeFiles/chademo_controller_vehicle.dir/chademo_can.c.o
+                0x1000118c                chademo_can_unpack_charger_frame
  .text.apply_charger_limits.part.0
-                0x100011f4       0xb4 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x100011f0       0xb4 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
  .text.enter_fault
-                0x100012a8       0x64 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x100012a4       0x64 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
  .text.chademo_fsm_init
-                0x1000130c       0x78 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
-                0x1000130c                chademo_fsm_init
+                0x10001308       0x78 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x10001308                chademo_fsm_init
  .text.chademo_fsm_push_can_rx
-                0x10001384       0x14 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
-                0x10001384                chademo_fsm_push_can_rx
+                0x10001380       0x14 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x10001380                chademo_fsm_push_can_rx
  .text.chademo_fsm_pull_can_tx
-                0x10001398       0x48 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
-                0x10001398                chademo_fsm_pull_can_tx
+                0x10001394       0x48 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x10001394                chademo_fsm_pull_can_tx
  .text.chademo_fsm_set_measured_voltage
-                0x100013e0        0x8 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
-                0x100013e0                chademo_fsm_set_measured_voltage
+                0x100013dc        0x8 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x100013dc                chademo_fsm_set_measured_voltage
  .text.chademo_fsm_set_measured_current
-                0x100013e8        0x8 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
-                0x100013e8                chademo_fsm_set_measured_current
+                0x100013e4        0x8 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x100013e4                chademo_fsm_set_measured_current
  .text.chademo_fsm_set_battery_soc
-                0x100013f0        0xc CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
-                0x100013f0                chademo_fsm_set_battery_soc
+                0x100013ec        0xc CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x100013ec                chademo_fsm_set_battery_soc
  .text.chademo_fsm_set_target_voltage
-                0x100013fc        0xc CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
-                0x100013fc                chademo_fsm_set_target_voltage
+                0x100013f8        0xc CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x100013f8                chademo_fsm_set_target_voltage
  .text.chademo_fsm_set_target_current
-                0x10001408        0xc CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
-                0x10001408                chademo_fsm_set_target_current
+                0x10001404        0xc CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x10001404                chademo_fsm_set_target_current
  .text.chademo_fsm_set_min_voltage
-                0x10001414        0x8 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
-                0x10001414                chademo_fsm_set_min_voltage
+                0x10001410        0x8 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x10001410                chademo_fsm_set_min_voltage
  .text.chademo_fsm_set_max_voltage
-                0x1000141c        0x8 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
-                0x1000141c                chademo_fsm_set_max_voltage
+                0x10001418        0x8 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x10001418                chademo_fsm_set_max_voltage
  .text.chademo_fsm_set_capacity_kwh
-                0x10001424        0x8 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
-                0x10001424                chademo_fsm_set_capacity_kwh
+                0x10001420        0x8 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x10001420                chademo_fsm_set_capacity_kwh
  .text.chademo_fsm_request_shutdown
-                0x1000142c       0x30 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
-                0x1000142c                chademo_fsm_request_shutdown
+                0x10001428       0x30 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x10001428                chademo_fsm_request_shutdown
  .text.chademo_fsm_step
-                0x1000145c      0x778 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
-                0x1000145c                chademo_fsm_step
+                0x10001458      0x778 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x10001458                chademo_fsm_step
  .text.chademo_fsm_state_name
-                0x10001bd4       0x18 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
-                0x10001bd4                chademo_fsm_state_name
+                0x10001bd0       0x18 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x10001bd0                chademo_fsm_state_name
  .text.chademo_fsm_fault_name
-                0x10001bec       0x18 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
-                0x10001bec                chademo_fsm_fault_name
+                0x10001be8       0x18 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+                0x10001be8                chademo_fsm_fault_name
  .text.gpio_set_function
-                0x10001c04       0x3c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
-                0x10001c04                gpio_set_function
+                0x10001c00       0x3c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
+                0x10001c00                gpio_set_function
  .text.gpio_set_pulls
-                0x10001c40       0x28 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
-                0x10001c40                gpio_set_pulls
+                0x10001c3c       0x28 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
+                0x10001c3c                gpio_set_pulls
  .text.gpio_init
-                0x10001c68       0x48 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
-                0x10001c68                gpio_init
- .text.panic    0x10001cb0       0x30 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_platform_panic/panic.c.o
-                0x10001cb0                panic
+                0x10001c64       0x48 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
+                0x10001c64                gpio_init
+ .text.panic    0x10001cac       0x30 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_platform_panic/panic.c.o
+                0x10001cac                panic
  .text.hw_claim_or_assert
-                0x10001ce0       0x58 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
-                0x10001ce0                hw_claim_or_assert
+                0x10001cdc       0x58 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
+                0x10001cdc                hw_claim_or_assert
  .text.hw_claim_unused_from_range
-                0x10001d38       0x80 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
-                0x10001d38                hw_claim_unused_from_range
+                0x10001d34       0x80 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
+                0x10001d34                hw_claim_unused_from_range
  .text.next_striped_spin_lock_num
-                0x10001db8       0x18 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
-                0x10001db8                next_striped_spin_lock_num
+                0x10001db4       0x18 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
+                0x10001db4                next_striped_spin_lock_num
  .text.spin_lock_claim_unused
-                0x10001dd0       0x20 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
-                0x10001dd0                spin_lock_claim_unused
+                0x10001dcc       0x20 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
+                0x10001dcc                spin_lock_claim_unused
  .text.spinlock_set_extexclall
-                0x10001df0       0x10 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+                0x10001dec       0x10 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
  .text.spin_locks_reset
-                0x10001e00       0x18 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
-                0x10001e00                spin_locks_reset
+                0x10001dfc       0x18 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+                0x10001dfc                spin_locks_reset
  .text.runtime_init_per_core_irq_priorities
-                0x10001e18       0x1c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x10001e18                runtime_init_per_core_irq_priorities
+                0x10001e14       0x1c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x10001e14                runtime_init_per_core_irq_priorities
  .text.irq_set_enabled
-                0x10001e34       0x2c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x10001e34                irq_set_enabled
+                0x10001e30       0x2c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x10001e30                irq_set_enabled
  .text.irq_is_enabled
-                0x10001e60       0x20 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x10001e60                irq_is_enabled
+                0x10001e5c       0x20 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x10001e5c                irq_is_enabled
  .text.irq_set_pending
-                0x10001e80       0x18 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x10001e80                irq_set_pending
+                0x10001e7c       0x18 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x10001e7c                irq_set_pending
  .text.irq_has_shared_handler
-                0x10001e98       0x20 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x10001e98                irq_has_shared_handler
+                0x10001e94       0x20 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x10001e94                irq_has_shared_handler
  .text.irq_set_exclusive_handler
-                0x10001eb8       0x60 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x10001eb8                irq_set_exclusive_handler
+                0x10001eb4       0x60 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x10001eb4                irq_set_exclusive_handler
  .text.irq_add_shared_handler
-                0x10001f18      0x1e8 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x10001f18                irq_add_shared_handler
+                0x10001f14      0x1e8 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x10001f14                irq_add_shared_handler
  .text.irq_add_tail_to_free_list
-                0x10002100       0xa8 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x10002100                irq_add_tail_to_free_list
+                0x100020fc       0xa8 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x100020fc                irq_add_tail_to_free_list
  .text.user_irq_claim_unused
-                0x100021a8       0x28 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
-                0x100021a8                user_irq_claim_unused
+                0x100021a4       0x28 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+                0x100021a4                user_irq_claim_unused
  .text.lock_init
-                0x100021d0        0xc CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_sync/lock_core.c.o
-                0x100021d0                lock_init
+                0x100021cc        0xc CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_sync/lock_core.c.o
+                0x100021cc                lock_init
  .text.runtime_init_mutex
-                0x100021dc       0x50 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
-                0x100021dc                runtime_init_mutex
+                0x100021d8       0x50 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
+                0x100021d8                runtime_init_mutex
  .text.mutex_init
-                0x1000222c       0x1c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
-                0x1000222c                mutex_init
+                0x10002228       0x1c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
+                0x10002228                mutex_init
  .text.critical_section_init
-                0x10002248       0x1c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
-                0x10002248                critical_section_init
+                0x10002244       0x1c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
+                0x10002244                critical_section_init
  .text.critical_section_init_with_lock_num
-                0x10002264       0x10 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
-                0x10002264                critical_section_init_with_lock_num
+                0x10002260       0x10 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
+                0x10002260                critical_section_init_with_lock_num
  .text.sleep_until_callback
-                0x10002274       0x3c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_time/time.c.o
+                0x10002270       0x3c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_time/time.c.o
+ *fill*         0x100022ac        0x4 
  .text.alarm_pool_irq_handler
                 0x100022b0      0x2e0 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_time/time.c.o
  .text.runtime_init_default_alarm_pool
@@ -4816,56 +4817,56 @@ LOAD linker stubs
  .comment       0x00000043       0x44 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memset.o)
  .comment       0x00000043       0x44 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
 
-.debug_info     0x00000000    0x38448
- .debug_info    0x00000000     0x253a CMakeFiles/chademo_controller_vehicle.dir/main.c.o
- .debug_info    0x0000253a     0x3171 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
- .debug_info    0x000056ab      0x556 CMakeFiles/chademo_controller_vehicle.dir/chademo_can.c.o
- .debug_info    0x00005c01     0x1ce1 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
- .debug_info    0x000078e2     0x2366 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
- .debug_info    0x00009c48      0x1be CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_platform_panic/panic.c.o
- .debug_info    0x00009e06      0xb78 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
- .debug_info    0x0000a97e      0x46f CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
- .debug_info    0x0000aded     0x145e CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
- .debug_info    0x0000c24b     0x2603 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
- .debug_info    0x0000e84e      0x187 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_sync/lock_core.c.o
- .debug_info    0x0000e9d5     0x1e7c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
- .debug_info    0x00010851      0x389 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
- .debug_info    0x00010bda     0x3a44 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_time/time.c.o
- .debug_info    0x0001461e     0x2b64 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_timer/timer.c.o
- .debug_info    0x00017182     0x174a CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_uart/uart.c.o
- .debug_info    0x000188cc     0x1d2c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.o
- .debug_info    0x0001a5f8      0x507 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_pll/pll.c.o
- .debug_info    0x0001aaff      0xba9 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c.o
- .debug_info    0x0001b6a8      0x26c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_ticks/ticks.c.o
- .debug_info    0x0001b914      0x894 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.o
- .debug_info    0x0001c1a8      0x1c4 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom_lock.c.o
- .debug_info    0x0001c36c      0x316 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_boot_lock/boot_lock.c.o
- .debug_info    0x0001c682      0x1b1 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.o
- .debug_info    0x0001c833      0x21a CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime/runtime.c.o
- .debug_info    0x0001ca4d     0x1bcd CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init.c.o
- .debug_info    0x0001e61a      0x7c9 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
- .debug_info    0x0001ede3       0x23 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_double/double_aeabi_dcp.S.o
- .debug_info    0x0001ee06      0x2b8 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
- .debug_info    0x0001f0be     0x1b11 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_printf/printf.c.o
- .debug_info    0x00020bcf       0x23 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_crt0/crt0.S.o
- .debug_info    0x00020bf2      0xbdf CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_clib_interface/newlib_interface.c.o
- .debug_info    0x000217d1     0x1769 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio/stdio.c.o
- .debug_info    0x00022f3a      0xb12 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/reset_interface.c.o
- .debug_info    0x00023a4c     0x1f67 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb.c.o
- .debug_info    0x000259b3      0x72b CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb_descriptors.c.o
- .debug_info    0x000260de      0x2b7 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_unique_id/unique_id.c.o
- .debug_info    0x00026395     0x2ae8 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/dcd_rp2040.c.o
- .debug_info    0x00028e7d     0x1271 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/rp2040_usb.c.o
- .debug_info    0x0002a0ee     0x4a72 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd.c.o
- .debug_info    0x0002eb60      0xb92 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd_control.c.o
- .debug_info    0x0002f6f2     0x1f9c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/cdc/cdc_device.c.o
- .debug_info    0x0003168e     0x178d CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/vendor/vendor_device.c.o
- .debug_info    0x00032e1b     0x1e06 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/tusb.c.o
- .debug_info    0x00034c21     0x2522 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/common/tusb_fifo.c.o
- .debug_info    0x00037143     0x10e0 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_spi/spi.c.o
- .debug_info    0x00038223      0x135 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memset.o)
- .debug_info    0x00038358       0x33 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memcpy.o)
- .debug_info    0x0003838b       0xbd /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
+.debug_info     0x00000000    0x38447
+ .debug_info    0x00000000     0x2539 CMakeFiles/chademo_controller_vehicle.dir/main.c.o
+ .debug_info    0x00002539     0x3171 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
+ .debug_info    0x000056aa      0x556 CMakeFiles/chademo_controller_vehicle.dir/chademo_can.c.o
+ .debug_info    0x00005c00     0x1ce1 CMakeFiles/chademo_controller_vehicle.dir/chademo_fsm.c.o
+ .debug_info    0x000078e1     0x2366 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.o
+ .debug_info    0x00009c47      0x1be CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_platform_panic/panic.c.o
+ .debug_info    0x00009e05      0xb78 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/hardware_claim/claim.c.o
+ .debug_info    0x0000a97d      0x46f CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync/sync.c.o
+ .debug_info    0x0000adec     0x145e CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+ .debug_info    0x0000c24a     0x2603 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_irq/irq.c.o
+ .debug_info    0x0000e84d      0x187 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_sync/lock_core.c.o
+ .debug_info    0x0000e9d4     0x1e7c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_sync/mutex.c.o
+ .debug_info    0x00010850      0x389 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_sync/critical_section.c.o
+ .debug_info    0x00010bd9     0x3a44 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/common/pico_time/time.c.o
+ .debug_info    0x0001461d     0x2b64 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_timer/timer.c.o
+ .debug_info    0x00017181     0x174a CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_uart/uart.c.o
+ .debug_info    0x000188cb     0x1d2c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.o
+ .debug_info    0x0001a5f7      0x507 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_pll/pll.c.o
+ .debug_info    0x0001aafe      0xba9 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c.o
+ .debug_info    0x0001b6a7      0x26c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_ticks/ticks.c.o
+ .debug_info    0x0001b913      0x894 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.o
+ .debug_info    0x0001c1a7      0x1c4 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_bootrom/bootrom_lock.c.o
+ .debug_info    0x0001c36b      0x316 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_boot_lock/boot_lock.c.o
+ .debug_info    0x0001c681      0x1b1 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.o
+ .debug_info    0x0001c832      0x21a CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime/runtime.c.o
+ .debug_info    0x0001ca4c     0x1bcd CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init.c.o
+ .debug_info    0x0001e619      0x7c9 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
+ .debug_info    0x0001ede2       0x23 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+ .debug_info    0x0001ee05      0x2b8 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+ .debug_info    0x0001f0bd     0x1b11 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_printf/printf.c.o
+ .debug_info    0x00020bce       0x23 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_crt0/crt0.S.o
+ .debug_info    0x00020bf1      0xbdf CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+ .debug_info    0x000217d0     0x1769 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio/stdio.c.o
+ .debug_info    0x00022f39      0xb12 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/reset_interface.c.o
+ .debug_info    0x00023a4b     0x1f67 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb.c.o
+ .debug_info    0x000259b2      0x72b CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_stdio_usb/stdio_usb_descriptors.c.o
+ .debug_info    0x000260dd      0x2b7 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_unique_id/unique_id.c.o
+ .debug_info    0x00026394     0x2ae8 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/dcd_rp2040.c.o
+ .debug_info    0x00028e7c     0x1271 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040/rp2040_usb.c.o
+ .debug_info    0x0002a0ed     0x4a72 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd.c.o
+ .debug_info    0x0002eb5f      0xb92 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/device/usbd_control.c.o
+ .debug_info    0x0002f6f1     0x1f9c CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/cdc/cdc_device.c.o
+ .debug_info    0x0003168d     0x178d CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/class/vendor/vendor_device.c.o
+ .debug_info    0x00032e1a     0x1e06 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/tusb.c.o
+ .debug_info    0x00034c20     0x2522 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/lib/tinyusb/src/common/tusb_fifo.c.o
+ .debug_info    0x00037142     0x10e0 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/hardware_spi/spi.c.o
+ .debug_info    0x00038222      0x135 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memset.o)
+ .debug_info    0x00038357       0x33 /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memcpy.o)
+ .debug_info    0x0003838a       0xbd /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
 
 .debug_abbrev   0x00000000     0x9f93
  .debug_abbrev  0x00000000      0x458 CMakeFiles/chademo_controller_vehicle.dir/main.c.o
