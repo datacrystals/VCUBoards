@@ -184,12 +184,13 @@ int main(void)
      * These are example values for a 96S Li-ion pack (~355V nominal).
      */
 #if IS_VEHICLE
-    chademo_fsm_set_max_voltage(&g_fsm_ctx, 402);    /* 4.2V * 96 = 403.2V → 402V max */
-    chademo_fsm_set_target_voltage(&g_fsm_ctx, 355); /* 3.7V * 96 = 355.2V → target */
+    /* Bench-test values for 450V-class pack to match charger threshold (402V min) */
+    chademo_fsm_set_max_voltage(&g_fsm_ctx, 500);    /* 500V max */
+    chademo_fsm_set_target_voltage(&g_fsm_ctx, 450); /* 450V target >= chargerThr */
     chademo_fsm_set_target_current(&g_fsm_ctx, 100); /* 100A max charge current */
     chademo_fsm_set_capacity_kwh(&g_fsm_ctx, 400);   /* 40.0 kWh pack */
     chademo_fsm_set_battery_soc(&g_fsm_ctx, 20);     /* Starting at 20% SOC */
-    printf("[BAT] Pack config: 96S Li-ion, 355V nom, 402V max, 40kWh\r\n");
+    printf("[BAT] Pack config: 450V nom, 500V max, 40kWh (bench test)\r\n");
 #else
     /* STATION role: Set available output capability */
     chademo_fsm_set_target_voltage(&g_fsm_ctx, 500);  /* 500V max output */

@@ -4085,19 +4085,19 @@ LOAD /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eab
                                 0xa5c (size before relaxing)
  .rodata.str1.4
                 0x100087b4       0x86 CMakeFiles/chademo_controller_vehicle.dir/main.c.o
- .rodata.__bi_667
+ .rodata.__bi_668
                 0x100087b4        0xc CMakeFiles/chademo_controller_vehicle.dir/main.c.o
- .rodata.__bi_666
+ .rodata.__bi_667
                 0x100087c0        0xc CMakeFiles/chademo_controller_vehicle.dir/main.c.o
- .rodata.__bi_665
+ .rodata.__bi_666
                 0x100087cc        0xc CMakeFiles/chademo_controller_vehicle.dir/main.c.o
- .rodata.__bi_664
+ .rodata.__bi_665
                 0x100087d8        0xc CMakeFiles/chademo_controller_vehicle.dir/main.c.o
- .rodata.__bi_663
+ .rodata.__bi_664
                 0x100087e4        0xc CMakeFiles/chademo_controller_vehicle.dir/main.c.o
- .rodata.__bi_662
+ .rodata.__bi_663
                 0x100087f0        0xc CMakeFiles/chademo_controller_vehicle.dir/main.c.o
- .rodata.__bi_661
+ .rodata.__bi_662
                 0x100087fc        0xc CMakeFiles/chademo_controller_vehicle.dir/main.c.o
  .rodata.can_cfg
                 0x10008808       0x20 CMakeFiles/chademo_controller_vehicle.dir/chademo_hal.c.o
@@ -4200,19 +4200,19 @@ LOAD /opt/st/stm32cubeclt_1.21.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eab
 
 .binary_info    0x10008afc       0x3c
  *(.binary_info.keep.*)
- .binary_info.keep.__bi_ptr667
+ .binary_info.keep.__bi_ptr668
                 0x10008afc        0x4 CMakeFiles/chademo_controller_vehicle.dir/main.c.o
- .binary_info.keep.__bi_ptr666
+ .binary_info.keep.__bi_ptr667
                 0x10008b00        0x4 CMakeFiles/chademo_controller_vehicle.dir/main.c.o
- .binary_info.keep.__bi_ptr665
+ .binary_info.keep.__bi_ptr666
                 0x10008b04        0x4 CMakeFiles/chademo_controller_vehicle.dir/main.c.o
- .binary_info.keep.__bi_ptr664
+ .binary_info.keep.__bi_ptr665
                 0x10008b08        0x4 CMakeFiles/chademo_controller_vehicle.dir/main.c.o
- .binary_info.keep.__bi_ptr663
+ .binary_info.keep.__bi_ptr664
                 0x10008b0c        0x4 CMakeFiles/chademo_controller_vehicle.dir/main.c.o
- .binary_info.keep.__bi_ptr662
+ .binary_info.keep.__bi_ptr663
                 0x10008b10        0x4 CMakeFiles/chademo_controller_vehicle.dir/main.c.o
- .binary_info.keep.__bi_ptr661
+ .binary_info.keep.__bi_ptr662
                 0x10008b14        0x4 CMakeFiles/chademo_controller_vehicle.dir/main.c.o
  .binary_info.keep.__bi_ptr84
                 0x10008b18        0x4 CMakeFiles/chademo_controller_vehicle.dir/home/tliao/git/pico-sdk/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o

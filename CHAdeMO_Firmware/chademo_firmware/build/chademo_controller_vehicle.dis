@@ -361,10 +361,10 @@ Disassembly of section .text:
 10000312:	4943      	ldr	r1, [pc, #268]	@ (10000420 <main+0x1f0>)
 10000314:	484f      	ldr	r0, [pc, #316]	@ (10000454 <main+0x224>)
 10000316:	f004 fb97 	bl	10004a48 <__wrap_printf>
-1000031a:	f44f 71c9 	mov.w	r1, #402	@ 0x192
+1000031a:	f44f 71fa 	mov.w	r1, #500	@ 0x1f4
 1000031e:	484c      	ldr	r0, [pc, #304]	@ (10000450 <main+0x220>)
 10000320:	f001 f85a 	bl	100013d8 <chademo_fsm_set_max_voltage>
-10000324:	f240 1163 	movw	r1, #355	@ 0x163
+10000324:	f44f 71e1 	mov.w	r1, #450	@ 0x1c2
 10000328:	4849      	ldr	r0, [pc, #292]	@ (10000450 <main+0x220>)
 1000032a:	f001 f849 	bl	100013c0 <chademo_fsm_set_target_voltage>
 1000032e:	2164      	movs	r1, #100	@ 0x64
