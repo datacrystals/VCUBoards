@@ -45,14 +45,14 @@ static void reset_tx_defaults(chademo_context_t *ctx)
 #if IS_VEHICLE
     /* Conservative defaults so the charger sees a valid vehicle.
      * Override these in your app with real battery parameters. */
-    ctx->tx.h100.max_battery_voltage_V  = 400;  /* 400 V max */
+    ctx->tx.h100.max_battery_voltage_V  = 500;  /* 500 V max (bench test) */
     ctx->tx.h100.charged_rate_ref_const = 100;  /* 100% = 0x64 */
-    ctx->tx.h101.max_charge_time_10s    = 0xFF;
+    ctx->tx.h101.max_charge_time_10s    = 30;   /* 300 s = 5 min */
     ctx->tx.h101.max_charge_time_60s    = 90;   /* 90 min default */
     ctx->tx.h101.est_charge_time_60s    = 60;   /* 60 min estimate */
     ctx->tx.h101.total_capacity_100wh   = 400;  /* 40.0 kWh */
     ctx->tx.h102.protocol_number        = CHADEMO_PROTOCOL_V1_0;
-    ctx->tx.h102.target_battery_voltage_V = 350; /* 350 V target */
+    ctx->tx.h102.target_battery_voltage_V = 450; /* 450 V target (bench test) */
     ctx->tx.h102.charging_current_request_A = 10; /* 10 A request */
     ctx->tx.h102.fault                  = 0;
     ctx->tx.h102.status                 = CHADEMO_EV_STATUS_CONTACTOR_OPEN;
@@ -98,6 +98,57 @@ static uint8_t clamp_u8(uint8_t val, uint8_t min, uint8_t max)
     return val;
 }
 
+#if IS_VEHICLE
+/** Update vehicle request to match latest charger limits.
+ *  Call from PARAM_CHECK / PRECHARGE / CHARGING so if the charger
+ *  updates its available current after handshake, we follow it. */
+static void apply_charger_limits(chademo_context_t *ctx)
+{
+    if (!ctx->rx.h108_valid) return;
+
+    uint16_t avail_v = ctx->rx.h108.avail_output_voltage_V;
+    uint8_t  avail_i = ctx->rx.h108.avail_output_current_A;
+    uint16_t thr_v   = ctx->rx.h108.threshold_voltage_V;
+    uint16_t pres_v  = ctx->rx.h109.present_output_voltage_V;
+    uint8_t  pres_i  = ctx->rx.h109.present_output_current_A;
+    uint8_t  status  = ctx->rx.h109.status;
+
+    /* Log limits once per second */
+    uint32_t now = hal_millis();
+    if ((now - ctx->last_log_ms) >= 1000) {
+        ctx->last_log_ms = now;
+        CHADEMO_LOG("LIMITS avail=%uV/%uA thr=%uV pres=%uV/%uA stat=0x%02X",
+                    avail_v, avail_i, thr_v, pres_v, pres_i, status);
+
+        /* Warn if battery voltage is below charger threshold */
+        if (thr_v > 0 && ctx->measured_voltage_V > 0 &&
+            ctx->measured_voltage_V < thr_v) {
+            CHADEMO_LOG("WARN batteryV=%u < chargerThr=%u (possible incompatibility)",
+                        ctx->measured_voltage_V, thr_v);
+        }
+        /* Warn if target voltage is above charger max */
+        if (ctx->tx.h102.target_battery_voltage_V > avail_v) {
+            CHADEMO_LOG("WARN targetV=%u > chargerAvailV=%u",
+                        ctx->tx.h102.target_battery_voltage_V, avail_v);
+        }
+    }
+
+    /* Cap current request to what charger currently says it can deliver.
+     * Don't drop to 0A if charger temporarily reports 0A — keep at least
+     * 1A so the charger knows we want to charge. */
+    if (avail_i == 0) {
+        /* Charger not ready yet; keep our request but don't exceed default */
+        if (ctx->tx.h102.charging_current_request_A == 0) {
+            ctx->tx.h102.charging_current_request_A = 1; /* signal intent */
+        }
+    } else if (ctx->tx.h102.charging_current_request_A > avail_i) {
+        CHADEMO_LOG("LIMITS capping current %u -> %u",
+                    ctx->tx.h102.charging_current_request_A, avail_i);
+        ctx->tx.h102.charging_current_request_A = avail_i;
+    }
+}
+#endif
+
 /* ============================================================================
  * PUBLIC: INITIALIZATION
  * ============================================================================ */
@@ -119,6 +170,7 @@ void chademo_fsm_init(chademo_context_t *ctx)
     ctx->can_link_ok     = false;
     ctx->contactor_closed = false;
     ctx->charge_enabled  = false;
+    ctx->last_log_ms     = 0;
 
     reset_tx_defaults(ctx);
     reset_rx_buffers(ctx);
@@ -365,8 +417,14 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
 #if IS_VEHICLE
         /* Assert DCP to tell charger we're connected */
         hal_gpio_set_dcp(true);
-        CHADEMO_LOG("PLUG_DETECTED: DCP=HIGH, CAN h108=%d h109=%d",
-                    (int)ctx->rx.h108_valid, (int)ctx->rx.h109_valid);
+        {
+            uint32_t now = hal_millis();
+            if ((now - ctx->last_log_ms) >= 1000) {
+                ctx->last_log_ms = now;
+                CHADEMO_LOG("PLUG_DETECTED: DCP=HIGH, CAN h108=%d h109=%d",
+                            (int)ctx->rx.h108_valid, (int)ctx->rx.h109_valid);
+            }
+        }
 
         /* Start sending our parameters */
         ctx->tx.h102.status = CHADEMO_EV_STATUS_CONTACTOR_OPEN;
@@ -451,13 +509,9 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
                 break;
             }
 
-            /* Cap our current request to what charger can deliver */
-            if (ctx->tx.h102.charging_current_request_A > ctx->rx.h108.avail_output_current_A) {
-                CHADEMO_LOG("HANDSHAKE: capping current %u -> %u",
-                            ctx->tx.h102.charging_current_request_A,
-                            ctx->rx.h108.avail_output_current_A);
-                ctx->tx.h102.charging_current_request_A = ctx->rx.h108.avail_output_current_A;
-            }
+            /* Note: we used to cap current here, but the charger may report
+             * 0A initially and then update after auth.  We now apply limits
+             * dynamically in PARAM_CHECK / PRECHARGE / CHARGING. */
 
             CHADEMO_LOG("HANDSHAKE: OK -> PARAM_CHECK");
             transition_to(ctx, CHADEMO_STATE_PARAM_CHECK);
@@ -516,7 +570,14 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
         /* Signal that we're ready to charge */
         ctx->tx.h102.status |= CHADEMO_EV_STATUS_CHARGING_ENABLED;
         ctx->charge_enabled = true;
-        CHADEMO_LOG("PARAM_CHECK: charge_enabled=1, status=0x%02X", ctx->tx.h102.status);
+        apply_charger_limits(ctx);
+        {
+            uint32_t now = hal_millis();
+            if ((now - ctx->last_log_ms) >= 1000) {
+                ctx->last_log_ms = now;
+                CHADEMO_LOG("PARAM_CHECK: charge_enabled=1, status=0x%02X", ctx->tx.h102.status);
+            }
+        }
 
         /* Wait for charger to signal connector locked and ready */
         if (ctx->rx.h109.status & CHADEMO_SE_STATUS_CONNECTOR_LOCKED) {
@@ -637,8 +698,16 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
                           ? (charger_voltage - ctx->measured_voltage_V)
                           : (ctx->measured_voltage_V - charger_voltage);
 
-            CHADEMO_LOG("PRECHARGE: chargerV=%u battV=%u diff=%u",
-                        charger_voltage, ctx->measured_voltage_V, diff);
+            {
+                uint32_t now = hal_millis();
+                if ((now - ctx->last_log_ms) >= 1000) {
+                    ctx->last_log_ms = now;
+                    CHADEMO_LOG("PRECHARGE: chargerV=%u battV=%u diff=%u",
+                                charger_voltage, ctx->measured_voltage_V, diff);
+                }
+            }
+
+            apply_charger_limits(ctx);
 
             /* When voltage difference is small enough, close contactor */
             if (diff < CHADEMO_PRECHARGE_THRESHOLD_V) {
@@ -719,6 +788,8 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
      * ================================================================= */
     case CHADEMO_STATE_CHARGING: {
 #if IS_VEHICLE
+        apply_charger_limits(ctx);
+
         /* ---- Dynamic current control with 20A/sec slew rate ----
          * CHAdeMO spec allows +/-20A per second change in current request.
          * We transmit every 100ms, so max change per step = 20A / 10 = 2A.

@@ -397,7 +397,7 @@ static void process_application_logic(void)
      */
 
     /* Example: simulated charge profile for testing without hardware */
-    static uint16_t sim_voltage = 280;  /* Starting at 280V */
+    static uint16_t sim_voltage = 450;  /* Starting at 450V (bench test only!) */
     static int16_t  sim_current = 0;    /* Starting at 0A */
 
     if (g_fsm_ctx.state == CHADEMO_STATE_CHARGING) {
@@ -512,8 +512,10 @@ static void log_pin_changes(void)
     }
     if (dcp != last_dcp) {
         last_dcp = dcp;
-        printf("[PIN] DCP (GPIO%u) = %s\r\n",
-               PIN_OUT_DCP, dcp ? "HIGH (asserted)" : "LOW  (de-asserted)");
+        printf("[PIN] DCP (GPIO%u) = %s (%s)\r\n",
+               PIN_OUT_DCP,
+               dcp ? "HIGH" : "LOW ",
+               dcp ? "de-asserted (inverted)" : "asserted (inverted)");
     }
     if (contactor != last_contactor) {
         last_contactor = contactor;

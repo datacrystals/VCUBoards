@@ -162,6 +162,7 @@ typedef struct {
     uint32_t         last_tx_ms;      /**< millis() of last CAN transmission */
     uint32_t         plug_detect_ms;  /**< millis() when plug first detected */
     uint32_t         current_ramp_ms; /**< For 20A/sec current slew limit */
+    uint32_t         last_log_ms;     /**< Rate-limit spammy debug logs */
 
     /* ---- TX buffers (what WE send) ---- */
 #if IS_VEHICLE

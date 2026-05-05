@@ -68,7 +68,7 @@
 #define CAN_ID_DIAG_RESPONSE        0x7E8U /* Diagnostic response (ECU) */
 
 /* Timing constants (milliseconds) */
-#define CHADEMO_Timing_CAN_TIMEOUT_MS      1000U  /* CAN comms watchdog timeout */
+#define CHADEMO_Timing_CAN_TIMEOUT_MS      10000U /* 10 s: allow charger pauses during auth */
 #define CHADEMO_Timing_HANDSHAKE_TIMEOUT_MS 300000U /* 5 min: allow time for auth/payment */
 #define CHADEMO_Timing_INSULATION_HOLD_MS   5000U /* Insulation test dwell */
 #define CHADEMO_Timing_PRECHARGE_TIMEOUT_MS 10000U /* Pre-charge to threshold */
