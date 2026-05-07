@@ -3,13 +3,13 @@
 
 # compile C with /usr/bin/cc
 # compile CXX with /usr/bin/c++
-C_DEFINES = -DHAS_MBEDTLS=1 -DMBEDTLS_CONFIG_FILE=\"picotool_mbedtls_config.h\" -DNO_PICO_PLATFORM=1 -DPICO_BUILD=1 -DPICO_NO_HARDWARE=1 -DPICO_ON_DEVICE=0
+C_DEFINES = -DHAS_MBEDTLS=1 -DMBEDTLS_CONFIG_FILE=\"picotool_mbedtls_config.h\" -DPICO_BUILD=1 -DPICO_NO_HARDWARE=1 -DPICO_ON_DEVICE=0
 
 C_INCLUDES = -I/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-src/bintool -I/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-src/lib/include -I/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-src/elf -I/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-src/model -I/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-build/model -I/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-src/errors -isystem /home/tliao/git/pico-sdk/lib/mbedtls/include -isystem /home/tliao/git/pico-sdk/src/common/boot_uf2_headers/include -isystem /home/tliao/git/pico-sdk/src/common/boot_picoboot_headers/include -isystem /home/tliao/git/pico-sdk/src/host/pico_platform/include -isystem /home/tliao/git/pico-sdk/src/common/boot_picobin_headers/include
 
 C_FLAGS = -O3 -DNDEBUG
 
-CXX_DEFINES = -DHAS_MBEDTLS=1 -DMBEDTLS_CONFIG_FILE=\"picotool_mbedtls_config.h\" -DNO_PICO_PLATFORM=1 -DPICO_BUILD=1 -DPICO_NO_HARDWARE=1 -DPICO_ON_DEVICE=0
+CXX_DEFINES = -DHAS_MBEDTLS=1 -DMBEDTLS_CONFIG_FILE=\"picotool_mbedtls_config.h\" -DPICO_BUILD=1 -DPICO_NO_HARDWARE=1 -DPICO_ON_DEVICE=0
 
 CXX_INCLUDES = -I/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-src/bintool -I/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-src/lib/include -I/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-src/elf -I/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-src/model -I/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-build/model -I/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-src/errors -isystem /home/tliao/git/pico-sdk/lib/mbedtls/include -isystem /home/tliao/git/pico-sdk/src/common/boot_uf2_headers/include -isystem /home/tliao/git/pico-sdk/src/common/boot_picoboot_headers/include -isystem /home/tliao/git/pico-sdk/src/host/pico_platform/include -isystem /home/tliao/git/pico-sdk/src/common/boot_picobin_headers/include
 

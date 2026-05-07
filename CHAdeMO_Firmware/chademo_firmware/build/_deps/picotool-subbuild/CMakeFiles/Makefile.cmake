@@ -10,8 +10,10 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.28.1/CMakeSystem.cmake"
   "CMakeLists.txt"
   "picotool-populate-prefix/tmp/picotool-populate-mkdirs.cmake"
+  "/opt/st/stm32cubeclt_1.21.0/CMake/share/cmake-3.28/Modules/CMakeDetermineSystem.cmake"
   "/opt/st/stm32cubeclt_1.21.0/CMake/share/cmake-3.28/Modules/CMakeGenericSystem.cmake"
   "/opt/st/stm32cubeclt_1.21.0/CMake/share/cmake-3.28/Modules/CMakeInitializeConfigs.cmake"
+  "/opt/st/stm32cubeclt_1.21.0/CMake/share/cmake-3.28/Modules/CMakeSystem.cmake.in"
   "/opt/st/stm32cubeclt_1.21.0/CMake/share/cmake-3.28/Modules/CMakeSystemSpecificInformation.cmake"
   "/opt/st/stm32cubeclt_1.21.0/CMake/share/cmake-3.28/Modules/CMakeSystemSpecificInitialize.cmake"
   "/opt/st/stm32cubeclt_1.21.0/CMake/share/cmake-3.28/Modules/ExternalProject.cmake"
@@ -36,6 +38,7 @@ set(CMAKE_MAKEFILE_OUTPUTS
 
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
+  "CMakeFiles/3.28.1/CMakeSystem.cmake"
   "picotool-populate-prefix/tmp/picotool-populate-mkdirs.cmake"
   "picotool-populate-prefix/tmp/picotool-populate-gitclone.cmake"
   "picotool-populate-prefix/src/picotool-populate-stamp/picotool-populate-gitinfo.txt"

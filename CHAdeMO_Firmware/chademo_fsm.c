@@ -22,17 +22,9 @@
 
 static void transition_to(chademo_context_t *ctx, chademo_state_t new_state)
 {
-    CHADEMO_LOG("STATE: %s -> %s", chademo_fsm_state_name(ctx->state), chademo_fsm_state_name(new_state));
     ctx->prev_state     = ctx->state;
     ctx->state          = new_state;
     ctx->state_entry_ms = 0;  /* Caller increments this; reset on entry */
-
-    /* Reset CAN RX timeout whenever we enter a state that expects charger
-     * traffic.  We skip PLUG_DETECTED because the charger may be silent
-     * while the user authenticates/pays at the station. */
-    if (new_state >= CHADEMO_STATE_HANDSHAKE && new_state <= CHADEMO_STATE_CHARGING) {
-        ctx->last_can_rx_ms = 0;
-    }
 }
 
 static bool timeout_expired(const chademo_context_t *ctx, uint32_t timeout_ms)
@@ -43,22 +35,18 @@ static bool timeout_expired(const chademo_context_t *ctx, uint32_t timeout_ms)
 static void reset_tx_defaults(chademo_context_t *ctx)
 {
 #if IS_VEHICLE
-    /* Conservative defaults so the charger sees a valid vehicle.
-     * Override these in your app with real battery parameters. */
-    ctx->tx.h100.minimum_charge_current_A  = 1;   /* 1 A min (must be >0) */
-    ctx->tx.h100.minimum_battery_voltage_V = 350; /* 350 V min (realistic for 450V pack) */
-    ctx->tx.h100.max_battery_voltage_V     = 500;  /* 500 V max (bench test) */
-    ctx->tx.h100.charged_rate_ref_const    = 100;  /* 100% = 0x64 */
-    ctx->tx.h101.max_charge_time_10s       = 0xFF; /* Invalid = no limit */
-    ctx->tx.h101.max_charge_time_60s       = 0xFF; /* Invalid = no limit */
-    ctx->tx.h101.est_charge_time_60s       = 60;   /* 60 min estimate */
-    ctx->tx.h101.total_capacity_100wh      = 400;  /* 40.0 kWh */
-    ctx->tx.h102.protocol_number           = CHADEMO_PROTOCOL_V1_0;
-    ctx->tx.h102.target_battery_voltage_V  = 450; /* 450 V target (bench test) */
-    ctx->tx.h102.charging_current_request_A = 2;  /* 2 A request (conservative) */
-    ctx->tx.h102.fault                     = 0;
-    ctx->tx.h102.status                    = CHADEMO_EV_STATUS_CONTACTOR_OPEN;
-    ctx->tx.h102.charged_rate_percent      = 20;   /* 20% SOC placeholder */
+    ctx->tx.h100.max_battery_voltage_V  = 0;
+    ctx->tx.h100.charged_rate_ref_const = 100; /* 100% = 0x64 */
+    ctx->tx.h101.max_charge_time_10s    = 0xFF;
+    ctx->tx.h101.max_charge_time_60s    = 90;   /* 90 min default */
+    ctx->tx.h101.est_charge_time_60s    = 60;   /* 60 min estimate */
+    ctx->tx.h101.total_capacity_100wh   = 0;
+    ctx->tx.h102.protocol_number        = CHADEMO_PROTOCOL_V1_0;
+    ctx->tx.h102.target_battery_voltage_V = 0;
+    ctx->tx.h102.charging_current_request_A = 0;
+    ctx->tx.h102.fault                  = 0;
+    ctx->tx.h102.status                 = CHADEMO_EV_STATUS_CONTACTOR_OPEN;
+    ctx->tx.h102.charged_rate_percent   = 0;
 #else
     ctx->tx.h108.welding_detection_support = false;
     ctx->tx.h108.avail_output_voltage_V    = 0;
@@ -84,10 +72,6 @@ static void reset_rx_buffers(chademo_context_t *ctx)
 
 static void enter_fault(chademo_context_t *ctx, chademo_fault_reason_t reason)
 {
-    if (ctx->state == CHADEMO_STATE_FAULT_SHUTDOWN) {
-        return; /* Already in fault shutdown; don't re-enter */
-    }
-    CHADEMO_LOG("FAULT: %s (in state %s)", chademo_fsm_fault_name(reason), chademo_fsm_state_name(ctx->state));
     ctx->fault_reason = reason;
     transition_to(ctx, CHADEMO_STATE_FAULT_SHUTDOWN);
 }
@@ -100,77 +84,12 @@ static uint8_t clamp_u8(uint8_t val, uint8_t min, uint8_t max)
     return val;
 }
 
-#if IS_VEHICLE
-/** Update vehicle request to match latest charger limits.
- *  Call from PARAM_CHECK / PRECHARGE / CHARGING so if the charger
- *  updates its available current after handshake, we follow it. */
-static void apply_charger_limits(chademo_context_t *ctx)
-{
-    if (!ctx->rx.h108_valid) return;
-
-    uint16_t avail_v = ctx->rx.h108.avail_output_voltage_V;
-    uint8_t  avail_i = ctx->rx.h108.avail_output_current_A;
-    uint16_t thr_v   = ctx->rx.h108.threshold_voltage_V;
-    uint16_t pres_v  = ctx->rx.h109.present_output_voltage_V;
-    uint8_t  pres_i  = ctx->rx.h109.present_output_current_A;
-    uint8_t  status  = ctx->rx.h109.status;
-
-    /* Log limits once per second */
-    uint32_t now = hal_millis();
-    if ((now - ctx->last_log_ms) >= 1000) {
-        ctx->last_log_ms = now;
-        CHADEMO_LOG("LIMITS avail=%uV/%uA thr=%uV pres=%uV/%uA stat=0x%02X",
-                    avail_v, avail_i, thr_v, pres_v, pres_i, status);
-
-        /* Threshold voltage is the STOP voltage (max output), NOT a minimum.
-         * It's typically min(vehicle_max_v, charger_avail_v).  A battery
-         * voltage below threshold is NORMAL and REQUIRED. */
-        if (thr_v > 0 && ctx->tx.h100.max_battery_voltage_V > thr_v) {
-            CHADEMO_LOG("WARN maxBattV=%u > chargerThr=%u (charger will stop at threshold)",
-                        ctx->tx.h100.max_battery_voltage_V, thr_v);
-        }
-        /* Warn if target voltage is above charger max */
-        if (ctx->tx.h102.target_battery_voltage_V > avail_v) {
-            CHADEMO_LOG("WARN targetV=%u > chargerAvailV=%u",
-                        ctx->tx.h102.target_battery_voltage_V, avail_v);
-        }
-        /* Warn if min battery voltage is below a sane level */
-        if (ctx->tx.h100.minimum_battery_voltage_V > 0 &&
-            ctx->tx.h100.minimum_battery_voltage_V < 200) {
-            CHADEMO_LOG("WARN minBattV=%u seems low (<200V)",
-                        ctx->tx.h100.minimum_battery_voltage_V);
-        }
-    }
-
-    /* Cap current request to what charger currently says it can deliver.
-     * Don't drop to 0A if charger temporarily reports 0A — keep at least
-     * 1A so the charger knows we want to charge. */
-    if (avail_i == 0) {
-        /* Charger not ready yet; keep our request but don't exceed default */
-        if (ctx->tx.h102.charging_current_request_A == 0) {
-            ctx->tx.h102.charging_current_request_A = 1; /* signal intent */
-        }
-    } else if (ctx->tx.h102.charging_current_request_A > avail_i) {
-        CHADEMO_LOG("LIMITS capping current %u -> %u",
-                    ctx->tx.h102.charging_current_request_A, avail_i);
-        ctx->tx.h102.charging_current_request_A = avail_i;
-    }
-}
-#endif
-
 /* ============================================================================
  * PUBLIC: INITIALIZATION
  * ============================================================================ */
 
 void chademo_fsm_init(chademo_context_t *ctx)
 {
-    /* Preserve application-measured values across resets */
-    uint16_t saved_voltage = ctx->measured_voltage_V;
-    int16_t  saved_current = ctx->measured_current_A;
-    uint8_t  saved_soc     = ctx->battery_soc;
-    uint16_t saved_temp    = ctx->battery_temp_C;
-
-    CHADEMO_LOG("FSM init (%s)", FSM_ROLE_STR);
     memset(ctx, 0, sizeof(*ctx));
 
     ctx->state           = CHADEMO_STATE_IDLE;
@@ -179,16 +98,15 @@ void chademo_fsm_init(chademo_context_t *ctx)
     ctx->can_link_ok     = false;
     ctx->contactor_closed = false;
     ctx->charge_enabled  = false;
-    ctx->last_log_ms     = 0;
 
     reset_tx_defaults(ctx);
     reset_rx_buffers(ctx);
 
-    /* Restore measured values so they survive plug-out / handshake-timeout resets */
-    ctx->measured_voltage_V = saved_voltage;
-    ctx->measured_current_A = saved_current;
-    ctx->battery_soc = saved_soc;
-    ctx->battery_temp_C = saved_temp;
+    /* Safe defaults for measured values */
+    ctx->measured_voltage_V = 0;
+    ctx->measured_current_A = 0;
+    ctx->battery_soc = 0;
+    ctx->battery_temp_C = 0;
 }
 
 /* ============================================================================
@@ -281,13 +199,6 @@ void chademo_fsm_set_target_current(chademo_context_t *ctx, uint8_t current_A)
 #endif
 }
 
-void chademo_fsm_set_min_voltage(chademo_context_t *ctx, uint16_t min_voltage_V)
-{
-#if IS_VEHICLE
-    ctx->tx.h100.minimum_battery_voltage_V = min_voltage_V;
-#endif
-}
-
 void chademo_fsm_set_max_voltage(chademo_context_t *ctx, uint16_t max_voltage_V)
 {
 #if IS_VEHICLE
@@ -319,74 +230,29 @@ void chademo_fsm_trigger_estop(chademo_context_t *ctx)
 }
 
 /* ============================================================================
- * STATE MACHINE STEP -- THE CORE
+ * STATE MACHINE STEP — THE CORE
  * ============================================================================ */
 
 chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
 {
     /* Update timing accumulators */
     ctx->state_entry_ms  += dt_ms;
+    ctx->last_can_rx_ms  += dt_ms;
     ctx->last_tx_ms      += dt_ms;
-
-    /* Only track CAN RX timeout in active charge-sequence states.
-     * Otherwise last_can_rx_ms grows unbounded in IDLE and triggers
-     * a spurious timeout immediately upon plug insertion. */
-#if CHADEMO_STATION_DETECT_METHOD == 1
-    if (ctx->state >= CHADEMO_STATE_PLUG_DETECTED && ctx->state <= CHADEMO_STATE_CHARGING) {
-#else
-    if (ctx->state >= CHADEMO_STATE_HANDSHAKE && ctx->state <= CHADEMO_STATE_CHARGING) {
-#endif
-        ctx->last_can_rx_ms += dt_ms;
-    }
 
     chademo_event_t event = CHADEMO_EVENT_NONE;
 
     /* ================================================================
-     * GLOBAL PLUG-REMOVAL MONITOR (VEHICLE)
-     * ================================================================
-     * If the plug is pulled at any time, immediately abort and return
-     * to IDLE.  This avoids waiting for CAN timeout after unplug.
+     * GLOBAL FAULT MONITORING (checked in all states except IDLE/STOP)
      * ================================================================ */
-#if IS_VEHICLE
-    if (ctx->state != CHADEMO_STATE_IDLE && ctx->state != CHADEMO_STATE_STOPPED) {
-        if (hal_gpio_read_pp()) {
-            CHADEMO_LOG("GLOBAL: PP HIGH — plug removed, aborting");
-            hal_gpio_set_dcp(false);
-            hal_gpio_set_contactor(false);
-            chademo_fsm_init(ctx);
-            event = CHADEMO_EVENT_UNPLUGGED;
-            return event;
-        }
-    }
-#else
-    if (ctx->state != CHADEMO_STATE_IDLE && ctx->state != CHADEMO_STATE_STOPPED) {
-        /* DCP HIGH = vehicle removed (inverted logic on this hardware) */
-        if (hal_gpio_read_dcp()) {
-            CHADEMO_LOG("GLOBAL: DCP HIGH — plug removed, aborting");
-            hal_gpio_set_ss1(false);
-            hal_gpio_set_ss2(false);
-            hal_gpio_set_contactor(false);
-            chademo_fsm_init(ctx);
-            event = CHADEMO_EVENT_UNPLUGGED;
-            return event;
-        }
-    }
-#endif
-
-    /* ================================================================
-     * GLOBAL FAULT MONITORING (checked only during active charge sequence)
-     * ================================================================ */
-    if (ctx->state >= CHADEMO_STATE_HANDSHAKE && ctx->state <= CHADEMO_STATE_CHARGING) {
-        /* CAN communication timeout (only after handshake starts — charger
-         * may be silent during plug-in while user authenticates/pays) */
+    if (ctx->state > CHADEMO_STATE_IDLE && ctx->state < CHADEMO_STATE_STOPPED) {
+        /* CAN communication timeout */
         if (ctx->last_can_rx_ms > CHADEMO_Timing_CAN_TIMEOUT_MS) {
-            CHADEMO_LOG("GLOBAL: CAN timeout, last_rx=%lu ms", ctx->last_can_rx_ms);
             enter_fault(ctx, CHADEMO_FAULT_CAN_TIMEOUT);
         }
 
         /* Battery overtemperature */
-        if (ctx->battery_temp_C > 60) {  /* 60C threshold, adjust as needed */
-            CHADEMO_LOG("GLOBAL: Battery overtemp %u C", ctx->battery_temp_C);
+        if (ctx->battery_temp_C > 60) {  /* 60°C threshold, adjust as needed */
             enter_fault(ctx, CHADEMO_FAULT_BATTERY_OVERTEMP);
         }
     }
@@ -397,7 +263,7 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
     switch (ctx->state) {
 
     /* =================================================================
-     * STATE: IDLE -- Waiting for plug insertion
+     * STATE: IDLE — Waiting for plug insertion
      * =================================================================
      * VEHICLE: Monitor PP (Proximity Pilot, GPIO18). PP goes LOW when
      *          plug is inserted (pull-down via plug resistor).
@@ -408,68 +274,42 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
      * ================================================================= */
     case CHADEMO_STATE_IDLE: {
 #if IS_VEHICLE
-        {
-            bool pp = hal_gpio_read_pp();
-            /* PP is active-LOW (pulled down via plug's Rp when inserted) */
-            if (!pp) {
-                /* Debounce: must be low for >200ms */
-                if (ctx->plug_detect_ms == 0) {
-                    CHADEMO_LOG("IDLE: PP LOW, starting debounce");
-                    ctx->plug_detect_ms = ctx->state_entry_ms;
-                } else if ((ctx->state_entry_ms - ctx->plug_detect_ms) >= CHADEMO_Timing_PLUG_DEBOUNCE_MS) {
-                    CHADEMO_LOG("IDLE: PP debounced, plug detected");
-                    transition_to(ctx, CHADEMO_STATE_PLUG_DETECTED);
-                    event = CHADEMO_EVENT_PLUG_INSERTED;
-                }
-            } else {
-                if (ctx->plug_detect_ms != 0) {
-                    CHADEMO_LOG("IDLE: PP HIGH, debounce reset");
-                }
-                ctx->plug_detect_ms = 0;
+        /* PP is active-LOW (pulled down via plug's Rp when inserted) */
+        if (!hal_gpio_read_pp()) {
+            /* Debounce: must be low for >200ms */
+            if (ctx->plug_detect_ms == 0) {
+                ctx->plug_detect_ms = ctx->state_entry_ms;
+            } else if ((ctx->state_entry_ms - ctx->plug_detect_ms) >= CHADEMO_Timing_PLUG_DEBOUNCE_MS) {
+                transition_to(ctx, CHADEMO_STATE_PLUG_DETECTED);
+                event = CHADEMO_EVENT_PLUG_INSERTED;
             }
+        } else {
+            ctx->plug_detect_ms = 0;
         }
 #else
-        {
-#if CHADEMO_STATION_DETECT_METHOD == 1
-            /* CAN-based detection: DCP input is unreliable on this hardware
-             * (external pullup keeps GPIO9 HIGH even with nothing connected).
-             * Detect vehicle by receiving any of its periodic CAN frames. */
-            bool vehicle_present = (ctx->rx.h100_valid || ctx->rx.h101_valid || ctx->rx.h102_valid);
-            const char *detect_src = "CAN";
-#else
-            bool dcp = hal_gpio_read_dcp();
-            /* Hardware is inverted: DCP LOW = vehicle present */
-            bool vehicle_present = !dcp;
-            const char *detect_src = "DCP";
-#endif
-            if (vehicle_present) {
-                if (ctx->plug_detect_ms == 0) {
-                    CHADEMO_LOG("IDLE: %s vehicle detected, starting debounce", detect_src);
-                    ctx->plug_detect_ms = ctx->state_entry_ms;
-                } else if ((ctx->state_entry_ms - ctx->plug_detect_ms) >= CHADEMO_Timing_PLUG_DEBOUNCE_MS) {
-                    CHADEMO_LOG("IDLE: %s debounced, vehicle detected", detect_src);
-                    transition_to(ctx, CHADEMO_STATE_PLUG_DETECTED);
-                    event = CHADEMO_EVENT_PLUG_INSERTED;
-                }
-            } else {
-                if (ctx->plug_detect_ms != 0) {
-                    CHADEMO_LOG("IDLE: %s lost, debounce reset", detect_src);
-                }
-                ctx->plug_detect_ms = 0;
+        /* STATION: Check if vehicle is presenting (SS1 from vehicle) */
+        if (hal_gpio_read_dcp()) {
+            if (ctx->plug_detect_ms == 0) {
+                ctx->plug_detect_ms = ctx->state_entry_ms;
+            } else if ((ctx->state_entry_ms - ctx->plug_detect_ms) >= CHADEMO_Timing_PLUG_DEBOUNCE_MS) {
+                transition_to(ctx, CHADEMO_STATE_PLUG_DETECTED);
+                event = CHADEMO_EVENT_PLUG_INSERTED;
             }
+        } else {
+            ctx->plug_detect_ms = 0;
         }
 #endif
         break;
     }
 
     /* =================================================================
-     * STATE: PLUG_DETECTED -- Physical connection made, start CAN
+     * STATE: PLUG_DETECTED — Physical connection made, start CAN
      * =================================================================
      * VEHICLE: Set DCP (GPIO19) HIGH to tell charger "I'm here".
      *          Start sending 0x100/0x101/0x102 periodically.
      *          Wait for charger to respond with 0x108/0x109.
      *
-     * STATION: Set SS1 (GPIO7) HIGH -- charge start signal 1.
+     * STATION: Set SS1 (GPIO7) HIGH — charge start signal 1.
      *          Start listening for vehicle CAN frames.
      *          When 0x100/0x101/0x102 received, start TX of 0x108/0x109.
      *
@@ -479,14 +319,6 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
 #if IS_VEHICLE
         /* Assert DCP to tell charger we're connected */
         hal_gpio_set_dcp(true);
-        {
-            uint32_t now = hal_millis();
-            if ((now - ctx->last_log_ms) >= 1000) {
-                ctx->last_log_ms = now;
-                CHADEMO_LOG("PLUG_DETECTED: DCP=HIGH, CAN h108=%d h109=%d",
-                            (int)ctx->rx.h108_valid, (int)ctx->rx.h109_valid);
-            }
-        }
 
         /* Start sending our parameters */
         ctx->tx.h102.status = CHADEMO_EV_STATUS_CONTACTOR_OPEN;
@@ -494,33 +326,22 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
 
         /* Wait for charger CAN frames (0x108 or 0x109) */
         if (ctx->rx.h108_valid || ctx->rx.h109_valid) {
-            CHADEMO_LOG("PLUG_DETECTED: charger CAN detected -> HANDSHAKE");
             transition_to(ctx, CHADEMO_STATE_HANDSHAKE);
             ctx->can_link_ok = true;
         }
 
         /* Timeout: if no charger response, return to IDLE */
         if (timeout_expired(ctx, CHADEMO_Timing_HANDSHAKE_TIMEOUT_MS)) {
-            CHADEMO_LOG("PLUG_DETECTED: timeout, no charger CAN -> IDLE");
             hal_gpio_set_dcp(false);
             chademo_fsm_init(ctx);  /* Full reset */
         }
 #else
         /* EVSE: Assert SS1 (charge sequence signal 1, connector pin 5) */
         hal_gpio_set_ss1(true);
-        {
-            uint32_t now = hal_millis();
-            if ((now - ctx->last_log_ms) >= 1000) {
-                ctx->last_log_ms = now;
-                CHADEMO_LOG("PLUG_DETECTED: SS1=HIGH, CAN h100=%d h101=%d h102=%d",
-                            (int)ctx->rx.h100_valid, (int)ctx->rx.h101_valid, (int)ctx->rx.h102_valid);
-            }
-        }
 
         /* Start listening for vehicle CAN */
         if (ctx->rx.h100_valid && ctx->rx.h101_valid && ctx->rx.h102_valid) {
-            /* Got all three vehicle frames -- link established */
-            CHADEMO_LOG("PLUG_DETECTED: vehicle CAN complete -> HANDSHAKE");
+            /* Got all three vehicle frames — link established */
             transition_to(ctx, CHADEMO_STATE_HANDSHAKE);
             ctx->can_link_ok = true;
             event = CHADEMO_EVENT_HANDSHAKE_COMPLETE;
@@ -528,27 +349,15 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
 
         /* Timeout */
         if (timeout_expired(ctx, CHADEMO_Timing_HANDSHAKE_TIMEOUT_MS)) {
-            CHADEMO_LOG("PLUG_DETECTED: timeout, no vehicle CAN -> IDLE");
             hal_gpio_set_ss1(false);
             chademo_fsm_init(ctx);
         }
-
-#if CHADEMO_STATION_DETECT_METHOD == 1
-        /* Short CAN-loss timeout: if we detected the vehicle via CAN but then
-         * lose communication, return to IDLE quickly (2 s) instead of waiting
-         * the full 5-minute handshake timeout. */
-        if (ctx->last_can_rx_ms > 2000) {
-            CHADEMO_LOG("PLUG_DETECTED: CAN lost (%lu ms), returning to IDLE", ctx->last_can_rx_ms);
-            hal_gpio_set_ss1(false);
-            chademo_fsm_init(ctx);
-        }
-#endif
 #endif
         break;
     }
 
     /* =================================================================
-     * STATE: HANDSHAKE -- Protocol version and parameter negotiation
+     * STATE: HANDSHAKE — Protocol version and parameter negotiation
      * =================================================================
      * Both sides have established CAN communication. Now verify:
      *   1. Protocol version compatibility (0x102 byte 0 vs 0x109 byte 0)
@@ -556,11 +365,11 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
      *   3. Current capability
      *
      * VEHICLE: Validate charger can provide our target voltage.
-     *          If charger voltage < our max battery voltage -> FAULT.
+     *          If charger voltage < our max battery voltage → FAULT.
      *          Copy charger available current as our request limit.
      *
      * STATION: Validate EV's max battery voltage <= our output capability.
-     *          If EV max V > charger avail V -> battery incompatible.
+     *          If EV max V > charger avail V → battery incompatible.
      *
      * Transition: PARAM_CHECK if all parameters compatible.
      *             FAULT_SHUTDOWN if incompatible.
@@ -569,11 +378,6 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
 #if IS_VEHICLE
         /* Check charger protocol version */
         if (ctx->rx.h109_valid) {
-            CHADEMO_LOG("HANDSHAKE: charger proto=%u availV=%uV availI=%uA",
-                        ctx->rx.h109.protocol_number,
-                        ctx->rx.h108.avail_output_voltage_V,
-                        ctx->rx.h108.avail_output_current_A);
-
             /* If charger is 1.0, we can use full features */
             if (ctx->rx.h109.protocol_number >= CHADEMO_PROTOCOL_V1_0) {
                 ctx->tx.h102.protocol_number = CHADEMO_PROTOCOL_V1_0;
@@ -581,29 +385,21 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
 
             /* Verify charger can provide our required voltage */
             if (ctx->rx.h108.avail_output_voltage_V < ctx->tx.h100.max_battery_voltage_V) {
-                CHADEMO_LOG("HANDSHAKE: INCOMPATIBLE chargerV=%u < maxBattV=%u",
-                            ctx->rx.h108.avail_output_voltage_V,
-                            ctx->tx.h100.max_battery_voltage_V);
                 enter_fault(ctx, CHADEMO_FAULT_INCOMPATIBLE);
                 break;
             }
 
-            /* Note: we used to cap current here, but the charger may report
-             * 0A initially and then update after auth.  We now apply limits
-             * dynamically in PARAM_CHECK / PRECHARGE / CHARGING. */
+            /* Cap our current request to what charger can deliver */
+            if (ctx->tx.h102.charging_current_request_A > ctx->rx.h108.avail_output_current_A) {
+                ctx->tx.h102.charging_current_request_A = ctx->rx.h108.avail_output_current_A;
+            }
 
-            CHADEMO_LOG("HANDSHAKE: OK -> PARAM_CHECK");
             transition_to(ctx, CHADEMO_STATE_PARAM_CHECK);
             event = CHADEMO_EVENT_HANDSHAKE_COMPLETE;
         }
 #else
         /* EVSE: Check vehicle parameters */
         if (ctx->rx.h102_valid) {
-            CHADEMO_LOG("HANDSHAKE: EV proto=%u maxBattV=%uV reqI=%uA",
-                        ctx->rx.h102.protocol_number,
-                        ctx->rx.h100.max_battery_voltage_V,
-                        ctx->rx.h102.charging_current_request_A);
-
             /* Protocol version check */
             if (ctx->rx.h102.protocol_number >= CHADEMO_PROTOCOL_V1_0) {
                 ctx->tx.h109.protocol_number = CHADEMO_PROTOCOL_V1_0;
@@ -612,15 +408,11 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
             /* Battery voltage compatibility check */
             if (ctx->rx.h100.max_battery_voltage_V > ctx->tx.h108.avail_output_voltage_V) {
                 /* EV wants more voltage than we can provide */
-                CHADEMO_LOG("HANDSHAKE: INCOMPATIBLE EV maxV=%u > availV=%u",
-                            ctx->rx.h100.max_battery_voltage_V,
-                            ctx->tx.h108.avail_output_voltage_V);
                 ctx->tx.h109.status |= CHADEMO_SE_STATUS_BATTERY_INCOMPATIBLE;
                 enter_fault(ctx, CHADEMO_FAULT_INCOMPATIBLE);
                 break;
             }
 
-            CHADEMO_LOG("HANDSHAKE: OK -> PARAM_CHECK");
             transition_to(ctx, CHADEMO_STATE_PARAM_CHECK);
             event = CHADEMO_EVENT_PARAMS_COMPATIBLE;
         }
@@ -630,7 +422,7 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
     }
 
     /* =================================================================
-     * STATE: PARAM_CHECK -- Final compatibility validation
+     * STATE: PARAM_CHECK — Final compatibility validation
      * =================================================================
      * Last chance to abort before committing to high-voltage operations.
      * Application-level checks (e.g., BMS approval) should happen here.
@@ -649,46 +441,33 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
         /* Signal that we're ready to charge */
         ctx->tx.h102.status |= CHADEMO_EV_STATUS_CHARGING_ENABLED;
         ctx->charge_enabled = true;
-        apply_charger_limits(ctx);
-        {
-            uint32_t now = hal_millis();
-            if ((now - ctx->last_log_ms) >= 1000) {
-                ctx->last_log_ms = now;
-                CHADEMO_LOG("PARAM_CHECK: charge_enabled=1, status=0x%02X", ctx->tx.h102.status);
-            }
-        }
 
         /* Wait for charger to signal connector locked and ready */
         if (ctx->rx.h109.status & CHADEMO_SE_STATUS_CONNECTOR_LOCKED) {
-            CHADEMO_LOG("PARAM_CHECK: connector locked -> PRECHARGE");
             transition_to(ctx, CHADEMO_STATE_PRECHARGE);
         }
 
         /* If charger reports incompatibility, abort */
         if (ctx->rx.h109.status & CHADEMO_SE_STATUS_BATTERY_INCOMPATIBLE) {
-            CHADEMO_LOG("PARAM_CHECK: charger reports incompatible");
             enter_fault(ctx, CHADEMO_FAULT_INCOMPATIBLE);
         }
 #else
         /* EVSE: Lock connector (mechanical lock actuator) */
         /* In hardware, this would trigger a GPIO to the lock motor */
         ctx->tx.h109.status |= CHADEMO_SE_STATUS_CONNECTOR_LOCKED;
-        CHADEMO_LOG("PARAM_CHECK: connector locked, status=0x%02X", ctx->tx.h109.status);
 
         /* Assert SS2 (charge sequence signal 2, connector pin 10) */
         hal_gpio_set_ss2(true);
 
-        /* Wait for vehicle charge permission (DCP should be LOW) */
-        if (!hal_gpio_read_dcp()) {
-            /* Vehicle is ready -- proceed to insulation test */
-            CHADEMO_LOG("PARAM_CHECK: DCP LOW -> INSULATION_TEST");
+        /* Wait for vehicle charge permission (DCP should be HIGH) */
+        if (hal_gpio_read_dcp()) {
+            /* Vehicle is ready — proceed to insulation test */
             transition_to(ctx, CHADEMO_STATE_INSULATION_TEST);
             event = CHADEMO_EVENT_PARAMS_COMPATIBLE;
         }
 
         /* Timeout waiting for vehicle */
         if (timeout_expired(ctx, CHADEMO_Timing_HANDSHAKE_TIMEOUT_MS)) {
-            CHADEMO_LOG("PARAM_CHECK: timeout waiting for DCP");
             enter_fault(ctx, CHADEMO_FAULT_CAN_TIMEOUT);
         }
 #endif
@@ -696,7 +475,7 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
     }
 
     /* =================================================================
-     * STATE: INSULATION_TEST -- Verify isolation resistance (EVSE only)
+     * STATE: INSULATION_TEST — Verify isolation resistance (EVSE only)
      * =================================================================
      * Per IEC 61851-23, the EVSE must verify insulation resistance
      * between DC+ / DC- and protective earth before applying voltage.
@@ -704,7 +483,7 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
      * STATION:
      *   1. Verify EV contactors are OPEN (no voltage on cable).
      *   2. Apply test voltage, measure insulation resistance.
-     *   3. If R_iso >= 500 Ohm/V (typically >100kOhm for 200V system), PASS.
+     *   3. If R_iso >= 500 Ω/V (typically >100kΩ for 200V system), PASS.
      *   4. Report result via CAN and proceed.
      *
      * This is a simplified implementation. A real system would interface
@@ -718,8 +497,7 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
 #if IS_STATION
         /* Verify no voltage on output terminals (EV contactors open) */
         if (ctx->measured_voltage_V >= 10) {
-            /* Voltage present -- EV contactors may be welded! */
-            CHADEMO_LOG("INSULATION_TEST: voltage present (%uV), possible weld", ctx->measured_voltage_V);
+            /* Voltage present — EV contactors may be welded! */
             if (timeout_expired(ctx, CHADEMO_Timing_PRECHARGE_TIMEOUT_MS / 2)) {
                 enter_fault(ctx, CHADEMO_FAULT_CONTACTOR_WELD);
             }
@@ -729,20 +507,18 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
         /* TODO: Trigger actual insulation test via IMD GPIO */
         /* For now, simulate a passed test after hold time */
         if (timeout_expired(ctx, CHADEMO_Timing_INSULATION_HOLD_MS)) {
-            CHADEMO_LOG("INSULATION_TEST: passed -> PRECHARGE");
             transition_to(ctx, CHADEMO_STATE_PRECHARGE);
             event = CHADEMO_EVENT_INSULATION_OK;
         }
 #else
         /* VEHICLE: Should never reach here, but if we do, skip to precharge */
-        CHADEMO_LOG("INSULATION_TEST: skip (vehicle) -> PRECHARGE");
         transition_to(ctx, CHADEMO_STATE_PRECHARGE);
 #endif
         break;
     }
 
     /* =================================================================
-     * STATE: PRECHARGE -- Match EVSE output voltage to battery voltage
+     * STATE: PRECHARGE — Match EVSE output voltage to battery voltage
      * =================================================================
      * The EVSE ramps its output voltage to match the battery voltage.
      * When the difference is small enough (<50V), the EV closes its
@@ -751,8 +527,8 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
      * VEHICLE:
      *   - Monitor charger present_voltage (0x109 bytes 1-2).
      *   - When |V_charger - V_battery| < CHADEMO_PRECHARGE_THRESHOLD_V (50V):
-     *     -> Close contactor (GPIO15 HIGH).
-     *     -> Set contactor_open = 0 in 0x102 status.
+     *     → Close contactor (GPIO15 HIGH).
+     *     → Set contactor_open = 0 in 0x102 status.
      *   - Wait for charger to detect contactor closure and start current.
      *
      * STATION:
@@ -777,22 +553,9 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
                           ? (charger_voltage - ctx->measured_voltage_V)
                           : (ctx->measured_voltage_V - charger_voltage);
 
-            {
-                uint32_t now = hal_millis();
-                if ((now - ctx->last_log_ms) >= 1000) {
-                    ctx->last_log_ms = now;
-                    CHADEMO_LOG("PRECHARGE: chargerV=%u battV=%u diff=%u",
-                                charger_voltage, ctx->measured_voltage_V, diff);
-                }
-            }
-
-            apply_charger_limits(ctx);
-
             /* When voltage difference is small enough, close contactor */
-            /* HACK: Bypass voltage check for bench testing without HV PSU */
-            if (1) {
+            if (diff < CHADEMO_PRECHARGE_THRESHOLD_V) {
                 if (!ctx->contactor_closed) {
-                    CHADEMO_LOG("PRECHARGE: diff<%uV, closing contactor", CHADEMO_PRECHARGE_THRESHOLD_V);
                     hal_gpio_set_contactor(true);  /* CLOSE contactor */
                     ctx->contactor_closed = true;
                     ctx->tx.h102.status &= ~CHADEMO_EV_STATUS_CONTACTOR_OPEN;
@@ -803,27 +566,22 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
         /* Check if charger has started delivering current (charging bit set) */
         if (ctx->contactor_closed &&
             (ctx->rx.h109.status & CHADEMO_SE_STATUS_CHARGING)) {
-            CHADEMO_LOG("PRECHARGE: charger reports CHARGING -> CHARGING");
             transition_to(ctx, CHADEMO_STATE_CHARGING);
             event = CHADEMO_EVENT_CHARGING_STARTED;
         }
 
         /* Timeout: if precharge takes too long, abort */
         if (timeout_expired(ctx, CHADEMO_Timing_PRECHARGE_TIMEOUT_MS)) {
-            CHADEMO_LOG("PRECHARGE: timeout");
             enter_fault(ctx, CHADEMO_FAULT_VOLTAGE_MISMATCH);
         }
 #else
         /* EVSE: Report present voltage approaching target */
         /* In a real system, this would control the PSU setpoint */
         ctx->tx.h109.present_output_voltage_V = ctx->measured_voltage_V;
-        CHADEMO_LOG("PRECHARGE: presentV=%u, EV status=0x%02X",
-                    ctx->tx.h109.present_output_voltage_V, ctx->rx.h102.status);
 
         /* Check if EV has closed contactors */
         if (!(ctx->rx.h102.status & CHADEMO_EV_STATUS_CONTACTOR_OPEN)) {
             /* EV contactors are closed! Start charging. */
-            CHADEMO_LOG("PRECHARGE: EV contactor closed -> CHARGING");
             ctx->tx.h109.status |= CHADEMO_SE_STATUS_CHARGING;
             transition_to(ctx, CHADEMO_STATE_CHARGING);
             event = CHADEMO_EVENT_CHARGING_STARTED;
@@ -831,7 +589,6 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
 
         /* Precharge timeout */
         if (timeout_expired(ctx, CHADEMO_Timing_PRECHARGE_TIMEOUT_MS)) {
-            CHADEMO_LOG("PRECHARGE: timeout");
             enter_fault(ctx, CHADEMO_FAULT_VOLTAGE_MISMATCH);
         }
 #endif
@@ -839,7 +596,7 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
     }
 
     /* =================================================================
-     * STATE: CHARGING -- Active current delivery with closed-loop control
+     * STATE: CHARGING — Active current delivery with closed-loop control
      * =================================================================
      * The main charging phase. Both sides exchange periodic CAN frames
      * at 100ms intervals for real-time control and monitoring.
@@ -849,13 +606,13 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
      *   - Apply 20A/sec slew rate limit to current changes.
      *   - Monitor charger-reported voltage/current for mismatches.
      *   - Check for normal stop conditions (SOC target, timer).
-     *   - If fault detected -> enter CEASE_CURRENT sub-state.
+     *   - If fault detected → enter CEASE_CURRENT sub-state.
      *
      * STATION:
      *   - Update 0x108/0x109 with present output and status.
      *   - Control PSU to deliver requested voltage/current.
      *   - Monitor EV fault flags in 0x102 byte 4.
-     *   - If EV requests 0A -> enter SHUTDOWN.
+     *   - If EV requests 0A → enter SHUTDOWN.
      *
      * SAFETY MONITORS (both sides):
      *   - Voltage mismatch: |V_reported - V_measured| > 12.5% for >5 frames
@@ -868,10 +625,8 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
      * ================================================================= */
     case CHADEMO_STATE_CHARGING: {
 #if IS_VEHICLE
-        apply_charger_limits(ctx);
-
         /* ---- Dynamic current control with 20A/sec slew rate ----
-         * CHAdeMO spec allows +/-20A per second change in current request.
+         * CHAdeMO spec allows ±20A per second change in current request.
          * We transmit every 100ms, so max change per step = 20A / 10 = 2A.
          * In practice, we ramp up at 1A per 100ms (10A/sec) for safety,
          * and ramp down at 2A per 100ms (20A/sec) for fast fault response.
@@ -894,7 +649,8 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
         }
 
         /* The actual transmitted current request is the ramped value */
-        ctx->tx.h102.charging_current_request_A = ctx->asking_amps;
+        /* Store in a temporary that gets packed into CAN */
+        /* (Application should copy asking_amps to tx.h102.charging_current_request_A) */
 
         /* ---- Voltage mismatch check ----
          * Abort if measured voltage differs from charger-reported voltage
@@ -909,8 +665,6 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
                 measured_v > reported_v + tolerance) {
                 ctx->v_mismatch_count++;
                 if (ctx->v_mismatch_count > 4) {
-                    CHADEMO_LOG("CHARGING: voltage mismatch rep=%u meas=%u",
-                                reported_v, measured_v);
                     enter_fault(ctx, CHADEMO_FAULT_VOLTAGE_MISMATCH);
                     break;
                 }
@@ -930,8 +684,6 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
                 (reported_c > (uint16_t)measured_c + c_tolerance)) {
                 ctx->c_mismatch_count++;
                 if (ctx->c_mismatch_count > 4) {
-                    CHADEMO_LOG("CHARGING: current mismatch rep=%u meas=%d",
-                                reported_c, measured_c);
                     enter_fault(ctx, CHADEMO_FAULT_CURRENT_MISMATCH);
                     break;
                 }
@@ -945,7 +697,6 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
                                     CHADEMO_SE_STATUS_SYS_MALFUNCTION)) {
             ctx->fault_count++;
             if (ctx->fault_count > 3) {
-                CHADEMO_LOG("CHARGING: EVSE fault status=0x%02X", ctx->rx.h109.status);
                 enter_fault(ctx, CHADEMO_FAULT_CHARGER_MALFUNCTION);
                 break;
             }
@@ -955,7 +706,6 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
 
         /* ---- Check for EVSE stop request ---- */
         if (ctx->rx.h109.status & CHADEMO_SE_STATUS_STOP_CONTROL) {
-            CHADEMO_LOG("CHARGING: EVSE stop control");
             transition_to(ctx, CHADEMO_STATE_SHUTDOWN);
             break;
         }
@@ -974,7 +724,6 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
             ctx->fault_count++;
             if (ctx->fault_count > 3) {
                 ctx->fault_status = ctx->rx.h102.fault;
-                CHADEMO_LOG("CHARGING: EV fault=0x%02X", ctx->rx.h102.fault);
                 enter_fault(ctx, CHADEMO_FAULT_OTHER);
                 break;
             }
@@ -982,10 +731,9 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
             ctx->fault_count = 0;
         }
 
-        /* Check if EV requests zero current -> normal shutdown */
+        /* Check if EV requests zero current → normal shutdown */
         if (ctx->rx.h102_valid && ctx->rx.h102.charging_current_request_A == 0) {
-            /* EV wants to stop -- initiate shutdown sequence */
-            CHADEMO_LOG("CHARGING: EV requests 0A -> SHUTDOWN");
+            /* EV wants to stop — initiate shutdown sequence */
             transition_to(ctx, CHADEMO_STATE_SHUTDOWN);
             break;
         }
@@ -1016,7 +764,7 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
     }
 
     /* =================================================================
-     * STATE: SHUTDOWN -- Normal termination sequence
+     * STATE: SHUTDOWN — Normal termination sequence
      * =================================================================
      * Graceful shutdown: ramp current to zero, then open contactors.
      *
@@ -1069,7 +817,7 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
     }
 
     /* =================================================================
-     * STATE: WAIT_ZERO_CURRENT -- Confirm no current before opening
+     * STATE: WAIT_ZERO_CURRENT — Confirm no current before opening
      * =================================================================
      * Safety dwell: wait a short time with zero current confirmed
      * before opening contactors. Prevents arcing.
@@ -1084,7 +832,7 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
     }
 
     /* =================================================================
-     * STATE: CONTACTOR_OPEN -- Open contactors, clean up
+     * STATE: CONTACTOR_OPEN — Open contactors, clean up
      * =================================================================
      * Open the high-voltage contactor and reset all control signals.
      *
@@ -1125,11 +873,11 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
     }
 
     /* =================================================================
-     * STATE: FAULT_SHUTDOWN -- Emergency shutdown
+     * STATE: FAULT_SHUTDOWN — Emergency shutdown
      * =================================================================
      * IMMEDIATE safety shutdown. This path is taken on any fault.
      * Order of operations is critical:
-     *   1. Request zero current (via CAN -- EV side)
+     *   1. Request zero current (via CAN — EV side)
      *   2. Open contactor (EV side) / disable output (EVSE side)
      *   3. De-assert all control signals
      *   4. Set fault flags in CAN frames
@@ -1146,8 +894,6 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
     case CHADEMO_STATE_FAULT_SHUTDOWN: {
         if (ctx->state_entry_ms < 50) {
             /* Phase 0: Zero current request, set fault flags */
-            CHADEMO_LOG("FAULT_SHUTDOWN: phase 0 (zero current), reason=%s",
-                        chademo_fsm_fault_name(ctx->fault_reason));
 #if IS_VEHICLE
             ctx->tx.h102.charging_current_request_A = 0;
             ctx->tx.h102.fault |= CHADEMO_EV_FAULT_BATTERY_VOLTAGE_DEV;
@@ -1180,7 +926,7 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
     }
 
     /* =================================================================
-     * STATE: STOPPED -- Charge complete or faulted, waiting for unplug
+     * STATE: STOPPED — Charge complete or faulted, waiting for unplug
      * =================================================================
      * Safe state. Contactor is open. No high voltage on the connector.
      * We remain here until the plug is removed, then return to IDLE.
@@ -1195,15 +941,13 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
 
         /* Wait for plug removal (PP goes HIGH) */
         if (hal_gpio_read_pp()) {
-            /* Plug removed -- fully reset and return to IDLE */
-            CHADEMO_LOG("STOPPED: PP HIGH, plug removed -> IDLE");
+            /* Plug removed — fully reset and return to IDLE */
             chademo_fsm_init(ctx);
             event = CHADEMO_EVENT_UNPLUGGED;
         }
 #else
-        /* EVSE: Wait for vehicle to disconnect (DCP goes HIGH) */
-        if (hal_gpio_read_dcp()) {
-            CHADEMO_LOG("STOPPED: DCP HIGH, vehicle disconnected -> IDLE");
+        /* EVSE: Wait for vehicle to disconnect (DCP goes LOW) */
+        if (!hal_gpio_read_dcp()) {
             chademo_fsm_init(ctx);
             event = CHADEMO_EVENT_UNPLUGGED;
         }
@@ -1212,7 +956,7 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
     }
 
     default:
-        /* Invalid state -- emergency shutdown */
+        /* Invalid state — emergency shutdown */
         enter_fault(ctx, CHADEMO_FAULT_OTHER);
         break;
     }

@@ -199,6 +199,8 @@ bintool/CMakeFiles/bintool.dir/bintool.cpp.o: \
  /usr/include/c++/13/bits/stl_numeric.h /usr/include/c++/13/cinttypes \
  /usr/include/inttypes.h \
  /home/tliao/git/pico-sdk/src/common/boot_picobin_headers/include/boot/picobin.h \
+ /home/tliao/git/pico-sdk/src/host/pico_platform/include/pico/platform.h \
+ /home/tliao/git/pico-sdk/src/host/pico_platform/include/hardware/platform_defs.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdbool.h \
  /usr/include/c++/13/map /usr/include/c++/13/bits/stl_tree.h \
  /usr/include/c++/13/bits/stl_map.h \
@@ -242,4 +244,15 @@ bintool/CMakeFiles/bintool.dir/bintool.cpp.o: \
  /home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-src/bintool/metadata.h \
  /usr/include/c++/13/iterator /usr/include/c++/13/bits/stream_iterator.h \
  /usr/include/c++/13/cassert \
+ /home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-src/model/model.h \
+ /home/tliao/git/pico-sdk/src/common/boot_uf2_headers/include/boot/uf2.h \
+ /home/tliao/git/pico-sdk/src/common/boot_picoboot_headers/include/boot/picoboot.h \
+ /home/tliao/git/pico-sdk/src/common/boot_picoboot_headers/include/boot/picoboot_constants.h \
+ /home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-build/model/rp2350_a2_rom_end.h \
+ /home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-build/model/rp2350_a3_rom_end.h \
+ /home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-build/model/rp2350_a4_rom_end.h \
+ /usr/include/c++/13/set /usr/include/c++/13/bits/stl_set.h \
+ /usr/include/c++/13/bits/stl_multiset.h /usr/include/c++/13/utility \
+ /usr/include/c++/13/bits/stl_relops.h \
+ /home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-src/model/addresses.h \
  /home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool-src/errors/errors.h

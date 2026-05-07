@@ -334,15 +334,6 @@ PICO_STDIO_USB:BOOL=OFF
 PIOASM_INSTALL_DIR:PATH=/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/pioasm-install
 
 //Value Computed by CMake
-chademo_controller_station_BINARY_DIR:STATIC=/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build
-
-//Value Computed by CMake
-chademo_controller_station_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-chademo_controller_station_SOURCE_DIR:STATIC=/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware
-
-//Value Computed by CMake
 chademo_controller_vehicle_BINARY_DIR:STATIC=/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build
 
 //Value Computed by CMake

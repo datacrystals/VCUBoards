@@ -1,12 +1,12 @@
 # CHAdeMO Controller — CMake Build Configuration
-# Target: Raspberry Pi Pico (RP2040)
+# Target: Raspberry Pi Pico 2 / RP2350 (all boards are RP2350)
 #
 # Build instructions:
 #   1. Set PICO_SDK_PATH environment variable to your Pico SDK
 #   2. mkdir build && cd build
 #   3. cmake .. -DCHADEMO_ROLE=VEHICLE   (or STATION)
 #   4. make -j4
-#   5. cp chademo_controller.uf2 /media/RPI-RP2/  (or use picotool)
+#   5. cp chademo_controller.uf2 /media/RP2350/  (or use picotool)
 #
 # Role selection:
 #   -DCHADEMO_ROLE=VEHICLE   → Build for EV (vehicle side)
@@ -27,6 +27,11 @@ elseif(CHADEMO_ROLE STREQUAL "STATION")
     set(PROJECT_SUFFIX "station")
 else()
     message(FATAL_ERROR "CHADEMO_ROLE must be VEHICLE or STATION")
+endif()
+
+# Default to RP2350 since all boards in this project are RP2350
+if(NOT DEFINED PICO_PLATFORM)
+    set(PICO_PLATFORM "rp2350-arm-s" CACHE STRING "Pico platform")
 endif()
 
 # Initialize Pico SDK
@@ -221,6 +226,6 @@ message(STATUS "")
 message(STATUS "========================================")
 message(STATUS "  CHAdeMO Controller Build")
 message(STATUS "  Role: ${CHADEMO_ROLE}")
-message(STATUS "  Target: Raspberry Pi Pico (RP2040)")
+message(STATUS "  Target: Raspberry Pi Pico 2 / RP2350")
 message(STATUS "========================================")
 message(STATUS "")
