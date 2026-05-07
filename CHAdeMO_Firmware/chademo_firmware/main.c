@@ -142,7 +142,7 @@ int main(void)
     /* ---- Initialize debug UART ---- */
     debug_init();
 
-    printf("=== CHADeMO STATION BOOT ===\r\n");
+    printf("=== CHADeMO %s BOOT ===\r\n", FSM_ROLE_STR);
     fflush(stdout);
 
     /* ---- Startup banner ---- */
