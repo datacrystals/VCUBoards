@@ -133,8 +133,8 @@ bool hal_gpio_read_dcp(void)
 #else
 void hal_gpio_set_dcp(bool active)
 {
-    /* DCP polarity test: try non-inverted drive.
-     * GPIO HIGH = DCP HIGH at connector. */
+    /* Vehicle DCP output: GPIO HIGH asserts DCP at the connector.
+     * (Hardware is non-inverting; comment in old code was wrong.) */
     gpio_put(PIN_OUT_DCP, active ? 1 : 0);
 }
 
@@ -337,40 +337,98 @@ bool hal_can_send(hal_can_channel_t ch, const chademo_can_frame_t *frame)
 {
     const can_hw_config_t *cfg = &can_cfg[ch];
 
-    /* Use TXB0 for simplicity (could implement round-robin for higher throughput) */
-    /* Check if TXB0 is available (TXREQ bit in TXB0CTRL) */
-    if (hal_can_read_reg(ch, MCP2515_REG_TXB0CTRL) & 0x08) {
-        return false;  /* TXB0 still pending */
+    /* Round-robin across TXB0, TXB1, TXB2 to avoid getting stuck
+     * if one buffer is locked up in an error state. */
+    static uint8_t tx_idx = 0;
+
+    const uint8_t ctrl_reg[3] = {
+        MCP2515_REG_TXB0CTRL,
+        MCP2515_REG_TXB1CTRL,
+        MCP2515_REG_TXB2CTRL
+    };
+    const uint8_t sidh_reg[3] = {
+        MCP2515_REG_TXB0SIDH,
+        MCP2515_REG_TXB1SIDH,
+        MCP2515_REG_TXB2SIDH
+    };
+
+    for (int attempt = 0; attempt < 3; attempt++) {
+        uint8_t idx = tx_idx % 3;
+        uint8_t txbctrl = hal_can_read_reg(ch, ctrl_reg[idx]);
+
+        if (!(txbctrl & 0x08)) {
+            /* Buffer is free - use it */
+            uint8_t sidh = (uint8_t)((frame->id >> 3) & 0xFF);
+            uint8_t sidl = (uint8_t)((frame->id & 0x07) << 5);
+
+            cs_low(cfg);
+            spi_xfer_byte(cfg, MCP2515_CMD_WRITE);
+            spi_xfer_byte(cfg, sidh_reg[idx]);
+            spi_xfer_byte(cfg, sidh);
+            spi_xfer_byte(cfg, sidl);
+            spi_xfer_byte(cfg, 0x00);       /* EID8 (not used, std frame) */
+            spi_xfer_byte(cfg, 0x00);       /* EID0 */
+            spi_xfer_byte(cfg, frame->len); /* DLC */
+            for (int i = 0; i < frame->len; i++) {
+                spi_xfer_byte(cfg, frame->data[i]);
+            }
+            for (int i = frame->len; i < 8; i++) {
+                spi_xfer_byte(cfg, 0x00);
+            }
+            cs_high(cfg);
+
+            /* Request transmission */
+            cs_low(cfg);
+            spi_xfer_byte(cfg, MCP2515_CMD_WRITE);
+            spi_xfer_byte(cfg, ctrl_reg[idx]);
+            spi_xfer_byte(cfg, 0x08);  /* TXREQ = 1 */
+            cs_high(cfg);
+
+            tx_idx = idx + 1;
+            return true;
+        }
+
+        /* Buffer busy - if TXERR is set, try to abort it */
+        if (txbctrl & 0x10) {
+            hal_can_bit_modify(ch, ctrl_reg[idx], 0x08, 0x00);
+            sleep_us(50);
+            txbctrl = hal_can_read_reg(ch, ctrl_reg[idx]);
+            if (!(txbctrl & 0x08)) {
+                /* Abort succeeded - use this buffer now */
+                uint8_t sidh = (uint8_t)((frame->id >> 3) & 0xFF);
+                uint8_t sidl = (uint8_t)((frame->id & 0x07) << 5);
+
+                cs_low(cfg);
+                spi_xfer_byte(cfg, MCP2515_CMD_WRITE);
+                spi_xfer_byte(cfg, sidh_reg[idx]);
+                spi_xfer_byte(cfg, sidh);
+                spi_xfer_byte(cfg, sidl);
+                spi_xfer_byte(cfg, 0x00);
+                spi_xfer_byte(cfg, 0x00);
+                spi_xfer_byte(cfg, frame->len);
+                for (int i = 0; i < frame->len; i++) {
+                    spi_xfer_byte(cfg, frame->data[i]);
+                }
+                for (int i = frame->len; i < 8; i++) {
+                    spi_xfer_byte(cfg, 0x00);
+                }
+                cs_high(cfg);
+
+                cs_low(cfg);
+                spi_xfer_byte(cfg, MCP2515_CMD_WRITE);
+                spi_xfer_byte(cfg, ctrl_reg[idx]);
+                spi_xfer_byte(cfg, 0x08);
+                cs_high(cfg);
+
+                tx_idx = idx + 1;
+                return true;
+            }
+        }
+
+        tx_idx = idx + 1;
     }
 
-    uint8_t sidh = (uint8_t)((frame->id >> 3) & 0xFF);
-    uint8_t sidl = (uint8_t)((frame->id & 0x07) << 5);
-
-    cs_low(cfg);
-    spi_xfer_byte(cfg, MCP2515_CMD_WRITE);
-    spi_xfer_byte(cfg, MCP2515_REG_TXB0SIDH);
-    spi_xfer_byte(cfg, sidh);           /* TXB0SIDH */
-    spi_xfer_byte(cfg, sidl);           /* TXB0SIDL */
-    spi_xfer_byte(cfg, 0x00);           /* TXB0EID8 (not used, std frame) */
-    spi_xfer_byte(cfg, 0x00);           /* TXB0EID0 */
-    spi_xfer_byte(cfg, frame->len);     /* TXB0DLC */
-    for (int i = 0; i < frame->len; i++) {
-        spi_xfer_byte(cfg, frame->data[i]);
-    }
-    /* Pad remaining bytes with 0 */
-    for (int i = frame->len; i < 8; i++) {
-        spi_xfer_byte(cfg, 0x00);
-    }
-    cs_high(cfg);
-
-    /* Request transmission */
-    cs_low(cfg);
-    spi_xfer_byte(cfg, MCP2515_CMD_WRITE);
-    spi_xfer_byte(cfg, MCP2515_REG_TXB0CTRL);
-    spi_xfer_byte(cfg, 0x08);  /* TXREQ = 1 */
-    cs_high(cfg);
-
-    return true;
+    return false;  /* All 3 buffers busy */
 }
 
 bool hal_can_recv(hal_can_channel_t ch, chademo_can_frame_t *frame)
@@ -448,7 +506,7 @@ void hal_watchdog_feed(void)
 
 void hal_watchdog_init(uint32_t timeout_ms)
 {
-    /* RP2040 watchdog timeout is in microseconds, max ~8.3 seconds */
+    /* RP2040/RP2350 watchdog: watchdog_enable() takes milliseconds */
     if (timeout_ms > 8300) timeout_ms = 8300;
-    watchdog_enable(timeout_ms * 1000, 1);
+    watchdog_enable(timeout_ms, 1);
 }

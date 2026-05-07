@@ -1,0 +1,3 @@
+# CHAdeMO serial log started 2026-05-05T00:04:05.571302
+# Port: /dev/ttyACM0 @ 115200 baud
+# ---

@@ -331,7 +331,11 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
     /* Only track CAN RX timeout in active charge-sequence states.
      * Otherwise last_can_rx_ms grows unbounded in IDLE and triggers
      * a spurious timeout immediately upon plug insertion. */
+#if CHADEMO_STATION_DETECT_METHOD == 1
+    if (ctx->state >= CHADEMO_STATE_PLUG_DETECTED && ctx->state <= CHADEMO_STATE_CHARGING) {
+#else
     if (ctx->state >= CHADEMO_STATE_HANDSHAKE && ctx->state <= CHADEMO_STATE_CHARGING) {
+#endif
         ctx->last_can_rx_ms += dt_ms;
     }
 
@@ -348,6 +352,19 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
         if (hal_gpio_read_pp()) {
             CHADEMO_LOG("GLOBAL: PP HIGH — plug removed, aborting");
             hal_gpio_set_dcp(false);
+            hal_gpio_set_contactor(false);
+            chademo_fsm_init(ctx);
+            event = CHADEMO_EVENT_UNPLUGGED;
+            return event;
+        }
+    }
+#else
+    if (ctx->state != CHADEMO_STATE_IDLE && ctx->state != CHADEMO_STATE_STOPPED) {
+        /* DCP HIGH = vehicle removed (inverted logic on this hardware) */
+        if (hal_gpio_read_dcp()) {
+            CHADEMO_LOG("GLOBAL: DCP HIGH — plug removed, aborting");
+            hal_gpio_set_ss1(false);
+            hal_gpio_set_ss2(false);
             hal_gpio_set_contactor(false);
             chademo_fsm_init(ctx);
             event = CHADEMO_EVENT_UNPLUGGED;
@@ -413,20 +430,30 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
         }
 #else
         {
+#if CHADEMO_STATION_DETECT_METHOD == 1
+            /* CAN-based detection: DCP input is unreliable on this hardware
+             * (external pullup keeps GPIO9 HIGH even with nothing connected).
+             * Detect vehicle by receiving any of its periodic CAN frames. */
+            bool vehicle_present = (ctx->rx.h100_valid || ctx->rx.h101_valid || ctx->rx.h102_valid);
+            const char *detect_src = "CAN";
+#else
             bool dcp = hal_gpio_read_dcp();
-            /* STATION: Check if vehicle is presenting (SS1 from vehicle) */
-            if (dcp) {
+            /* Hardware is inverted: DCP LOW = vehicle present */
+            bool vehicle_present = !dcp;
+            const char *detect_src = "DCP";
+#endif
+            if (vehicle_present) {
                 if (ctx->plug_detect_ms == 0) {
-                    CHADEMO_LOG("IDLE: DCP HIGH, starting debounce");
+                    CHADEMO_LOG("IDLE: %s vehicle detected, starting debounce", detect_src);
                     ctx->plug_detect_ms = ctx->state_entry_ms;
                 } else if ((ctx->state_entry_ms - ctx->plug_detect_ms) >= CHADEMO_Timing_PLUG_DEBOUNCE_MS) {
-                    CHADEMO_LOG("IDLE: DCP debounced, vehicle detected");
+                    CHADEMO_LOG("IDLE: %s debounced, vehicle detected", detect_src);
                     transition_to(ctx, CHADEMO_STATE_PLUG_DETECTED);
                     event = CHADEMO_EVENT_PLUG_INSERTED;
                 }
             } else {
                 if (ctx->plug_detect_ms != 0) {
-                    CHADEMO_LOG("IDLE: DCP LOW, debounce reset");
+                    CHADEMO_LOG("IDLE: %s lost, debounce reset", detect_src);
                 }
                 ctx->plug_detect_ms = 0;
             }
@@ -481,8 +508,14 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
 #else
         /* EVSE: Assert SS1 (charge sequence signal 1, connector pin 5) */
         hal_gpio_set_ss1(true);
-        CHADEMO_LOG("PLUG_DETECTED: SS1=HIGH, CAN h100=%d h101=%d h102=%d",
-                    (int)ctx->rx.h100_valid, (int)ctx->rx.h101_valid, (int)ctx->rx.h102_valid);
+        {
+            uint32_t now = hal_millis();
+            if ((now - ctx->last_log_ms) >= 1000) {
+                ctx->last_log_ms = now;
+                CHADEMO_LOG("PLUG_DETECTED: SS1=HIGH, CAN h100=%d h101=%d h102=%d",
+                            (int)ctx->rx.h100_valid, (int)ctx->rx.h101_valid, (int)ctx->rx.h102_valid);
+            }
+        }
 
         /* Start listening for vehicle CAN */
         if (ctx->rx.h100_valid && ctx->rx.h101_valid && ctx->rx.h102_valid) {
@@ -499,6 +532,17 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
             hal_gpio_set_ss1(false);
             chademo_fsm_init(ctx);
         }
+
+#if CHADEMO_STATION_DETECT_METHOD == 1
+        /* Short CAN-loss timeout: if we detected the vehicle via CAN but then
+         * lose communication, return to IDLE quickly (2 s) instead of waiting
+         * the full 5-minute handshake timeout. */
+        if (ctx->last_can_rx_ms > 2000) {
+            CHADEMO_LOG("PLUG_DETECTED: CAN lost (%lu ms), returning to IDLE", ctx->last_can_rx_ms);
+            hal_gpio_set_ss1(false);
+            chademo_fsm_init(ctx);
+        }
+#endif
 #endif
         break;
     }
@@ -849,8 +893,7 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
         }
 
         /* The actual transmitted current request is the ramped value */
-        /* Store in a temporary that gets packed into CAN */
-        /* (Application should copy asking_amps to tx.h102.charging_current_request_A) */
+        ctx->tx.h102.charging_current_request_A = ctx->asking_amps;
 
         /* ---- Voltage mismatch check ----
          * Abort if measured voltage differs from charger-reported voltage

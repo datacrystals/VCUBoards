@@ -67,6 +67,12 @@
 #define CAN_ID_DIAG_REQUEST         0x7DFU /* UDS/ISO-15765 diagnostic request */
 #define CAN_ID_DIAG_RESPONSE        0x7E8U /* Diagnostic response (ECU) */
 
+/* Station plug detection method:
+ * 0 = DCP input (GPIO9) — requires reliable DCP signal
+ * 1 = CAN frame detection — use when DCP input is unreliable due to
+ *     external pullup or PCB leakage keeping the line HIGH */
+#define CHADEMO_STATION_DETECT_METHOD 0
+
 /* Timing constants (milliseconds) */
 #define CHADEMO_Timing_CAN_TIMEOUT_MS      10000U /* 10 s: allow charger pauses during auth */
 #define CHADEMO_Timing_HANDSHAKE_TIMEOUT_MS 300000U /* 5 min: allow time for auth/payment */
@@ -159,6 +165,16 @@
 #define MCP2515_REG_TXB0SIDL        0x32U
 #define MCP2515_REG_TXB0DLC         0x35U
 #define MCP2515_REG_TXB0D0          0x36U
+#define MCP2515_REG_TXB1CTRL        0x40U
+#define MCP2515_REG_TXB1SIDH        0x41U
+#define MCP2515_REG_TXB1SIDL        0x42U
+#define MCP2515_REG_TXB1DLC         0x45U
+#define MCP2515_REG_TXB1D0          0x46U
+#define MCP2515_REG_TXB2CTRL        0x50U
+#define MCP2515_REG_TXB2SIDH        0x51U
+#define MCP2515_REG_TXB2SIDL        0x52U
+#define MCP2515_REG_TXB2DLC         0x55U
+#define MCP2515_REG_TXB2D0          0x56U
 #define MCP2515_REG_RXB0CTRL        0x60U
 #define MCP2515_REG_RXB0SIDH        0x61U
 #define MCP2515_REG_RXB0SIDL        0x62U
