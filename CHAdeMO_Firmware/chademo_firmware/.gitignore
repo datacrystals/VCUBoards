@@ -1,0 +1,28 @@
+# Build artifacts
+build/
+*.uf2
+*.elf
+*.bin
+*.hex
+*.dis
+*.map
+
+# IDE / editor
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Archives
+*.zip
+
+# Log files
+chademo_log_*.txt
+
+# Python
+__pycache__/
+*.pyc

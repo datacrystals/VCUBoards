@@ -817,6 +817,14 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
         /* EVSE: Report present voltage approaching target */
         /* In a real system, this would control the PSU setpoint */
         ctx->tx.h109.present_output_voltage_V = ctx->measured_voltage_V;
+
+        /* Close station contactor so HV can reach the connector */
+        if (!ctx->contactor_closed) {
+            CHADEMO_LOG("PRECHARGE: closing station contactor");
+            hal_gpio_set_contactor(true);
+            ctx->contactor_closed = true;
+        }
+
         CHADEMO_LOG("PRECHARGE: presentV=%u, EV status=0x%02X",
                     ctx->tx.h109.present_output_voltage_V, ctx->rx.h102.status);
 
@@ -1002,6 +1010,13 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
             break;
         }
 
+        /* Ensure station contactor stays closed during charging */
+        if (!ctx->contactor_closed) {
+            CHADEMO_LOG("CHARGING: re-closing station contactor");
+            hal_gpio_set_contactor(true);
+            ctx->contactor_closed = true;
+        }
+
         /* Update present output in 0x109 */
         ctx->tx.h109.present_output_voltage_V = ctx->measured_voltage_V;
         ctx->tx.h109.present_output_current_A =
@@ -1054,6 +1069,10 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
         /* Clear charging status */
         ctx->tx.h109.status &= ~CHADEMO_SE_STATUS_CHARGING;
         ctx->tx.h109.status |= CHADEMO_SE_STATUS_STOP_CONTROL;
+
+        /* Open station contactor — begin safe disconnect */
+        hal_gpio_set_contactor(false);
+        ctx->contactor_closed = false;
 
         /* Wait for EV to open contactors or request 0A */
         if ((ctx->rx.h102.status & CHADEMO_EV_STATUS_CONTACTOR_OPEN) ||

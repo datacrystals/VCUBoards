@@ -1,7 +1,0 @@
-/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool/picotool
-/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool/picotoolTargets.cmake
-/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool/picotoolTargets-release.cmake
-/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool/picotoolConfig.cmake
-/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool/picotoolConfigVersion.cmake
-/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool/enc_bootloader.elf
-/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build/_deps/picotool/enc_bootloader_mbedtls.elf
