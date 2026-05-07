@@ -789,10 +789,10 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
             apply_charger_limits(ctx);
 
             /* When voltage difference is small enough, close contactor */
-            /* HACK: Bypass voltage check for bench testing without HV PSU */
-            if (1) {
+            if (diff < CHADEMO_PRECHARGE_THRESHOLD_V) {
                 if (!ctx->contactor_closed) {
-                    CHADEMO_LOG("PRECHARGE: diff<%uV, closing contactor", CHADEMO_PRECHARGE_THRESHOLD_V);
+                    CHADEMO_LOG("PRECHARGE: diff=%uV <%uV, closing contactor",
+                                diff, CHADEMO_PRECHARGE_THRESHOLD_V);
                     hal_gpio_set_contactor(true);  /* CLOSE contactor */
                     ctx->contactor_closed = true;
                     ctx->tx.h102.status &= ~CHADEMO_EV_STATUS_CONTACTOR_OPEN;
@@ -803,9 +803,19 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
         /* Check if charger has started delivering current (charging bit set) */
         if (ctx->contactor_closed &&
             (ctx->rx.h109.status & CHADEMO_SE_STATUS_CHARGING)) {
-            CHADEMO_LOG("PRECHARGE: charger reports CHARGING -> CHARGING");
-            transition_to(ctx, CHADEMO_STATE_CHARGING);
-            event = CHADEMO_EVENT_CHARGING_STARTED;
+            /* Defense-in-depth: verify voltage is still matched before entering CHARGING */
+            uint16_t charger_v = ctx->rx.h109.present_output_voltage_V;
+            uint16_t batt_v = ctx->measured_voltage_V;
+            uint16_t diff = (charger_v > batt_v)
+                          ? (charger_v - batt_v)
+                          : (batt_v - charger_v);
+            if (diff < CHADEMO_PRECHARGE_THRESHOLD_V * 2) {
+                CHADEMO_LOG("PRECHARGE: charger reports CHARGING, diff=%uV -> CHARGING", diff);
+                transition_to(ctx, CHADEMO_STATE_CHARGING);
+                event = CHADEMO_EVENT_CHARGING_STARTED;
+            } else {
+                CHADEMO_LOG("PRECHARGE: charger reports CHARGING but diff=%uV, waiting", diff);
+            }
         }
 
         /* Timeout: if precharge takes too long, abort */
@@ -828,13 +838,25 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
         CHADEMO_LOG("PRECHARGE: presentV=%u, EV status=0x%02X",
                     ctx->tx.h109.present_output_voltage_V, ctx->rx.h102.status);
 
-        /* Check if EV has closed contactors */
+        /* Check if EV has closed contactors AND voltage is matched */
         if (!(ctx->rx.h102.status & CHADEMO_EV_STATUS_CONTACTOR_OPEN)) {
-            /* EV contactors are closed! Start charging. */
-            CHADEMO_LOG("PRECHARGE: EV contactor closed -> CHARGING");
-            ctx->tx.h109.status |= CHADEMO_SE_STATUS_CHARGING;
-            transition_to(ctx, CHADEMO_STATE_CHARGING);
-            event = CHADEMO_EVENT_CHARGING_STARTED;
+            uint16_t ev_target_v = ctx->rx.h102_valid
+                ? ctx->rx.h102.target_battery_voltage_V
+                : ctx->measured_voltage_V;
+            uint16_t present_v = ctx->measured_voltage_V;
+            uint16_t diff = (present_v > ev_target_v)
+                          ? (present_v - ev_target_v)
+                          : (ev_target_v - present_v);
+
+            if (diff < CHADEMO_PRECHARGE_THRESHOLD_V) {
+                /* EV contactors are closed and voltage matched! Start charging. */
+                CHADEMO_LOG("PRECHARGE: EV contactor closed, V matched (diff=%uV) -> CHARGING", diff);
+                ctx->tx.h109.status |= CHADEMO_SE_STATUS_CHARGING;
+                transition_to(ctx, CHADEMO_STATE_CHARGING);
+                event = CHADEMO_EVENT_CHARGING_STARTED;
+            } else {
+                CHADEMO_LOG("PRECHARGE: EV contactor closed but V diff=%uV, waiting", diff);
+            }
         }
 
         /* Precharge timeout */

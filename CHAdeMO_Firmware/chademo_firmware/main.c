@@ -445,6 +445,21 @@ static void process_application_logic(void)
      *   ctx->battery_soc = bms_get_soc();
      */
 
+    /* Re-apply battery/capability params every loop.
+     * chademo_fsm_init() zeros these on unplug/timeout, so we must
+     * refresh them to survive FSM resets without a full reboot. */
+#if IS_VEHICLE
+    chademo_fsm_set_min_voltage(&g_fsm_ctx, 40);
+    chademo_fsm_set_max_voltage(&g_fsm_ctx, 500);
+    chademo_fsm_set_target_voltage(&g_fsm_ctx, 50);
+    chademo_fsm_set_target_current(&g_fsm_ctx, 2);
+    chademo_fsm_set_capacity_kwh(&g_fsm_ctx, 400);
+    chademo_fsm_set_battery_soc(&g_fsm_ctx, 20);
+#else
+    chademo_fsm_set_target_voltage(&g_fsm_ctx, CHADEMO_MAX_VOLTAGE_V);
+    chademo_fsm_set_target_current(&g_fsm_ctx, CHADEMO_MAX_CURRENT_A);
+#endif
+
     /* Example: simulated charge profile for testing without hardware */
     static uint16_t sim_voltage = 50;   /* Vehicle starts at batt V; station resets below */
     static int16_t  sim_current = 0;    /* Starting at 0A */
@@ -458,16 +473,16 @@ static void process_application_logic(void)
         uint16_t target_v = g_fsm_ctx.rx.h102_valid
             ? g_fsm_ctx.rx.h102.target_battery_voltage_V
             : 50;
-        if (sim_voltage < target_v) sim_voltage++;
-        if (sim_voltage > target_v) sim_voltage--;
+        if (sim_voltage < target_v) { sim_voltage += 5; if (sim_voltage > target_v) sim_voltage = target_v; }
+        if (sim_voltage > target_v) { sim_voltage -= 5; if (sim_voltage < target_v) sim_voltage = target_v; }
     }
 #else
     /* Vehicle: voltage tracks target during precharge/charging */
     if (g_fsm_ctx.state == CHADEMO_STATE_PRECHARGE ||
         g_fsm_ctx.state == CHADEMO_STATE_CHARGING) {
         uint16_t target_v = g_fsm_ctx.tx.h102.target_battery_voltage_V;
-        if (sim_voltage < target_v) sim_voltage++;
-        if (sim_voltage > target_v) sim_voltage--;
+        if (sim_voltage < target_v) { sim_voltage += 5; if (sim_voltage > target_v) sim_voltage = target_v; }
+        if (sim_voltage > target_v) { sim_voltage -= 5; if (sim_voltage < target_v) sim_voltage = target_v; }
     }
 #endif
 

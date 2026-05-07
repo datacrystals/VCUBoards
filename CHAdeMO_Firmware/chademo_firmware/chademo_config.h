@@ -87,7 +87,7 @@
 /* Voltage / Current safety thresholds */
 #define CHADEMO_MAX_VOLTAGE_V       500U   /* Absolute max pack voltage */
 #define CHADEMO_MAX_CURRENT_A       200U   /* Absolute max charge current */
-#define CHADEMO_PRECHARGE_THRESHOLD_V 50U  /* Min voltage diff for pre-charge OK */
+#define CHADEMO_PRECHARGE_THRESHOLD_V 10U  /* Min voltage diff for pre-charge OK */
 #define CHADEMO_CONTACTOR_CLOSE_MIN_V 100U /* Min system voltage to close contactor */
 
 /* ============================================================================
