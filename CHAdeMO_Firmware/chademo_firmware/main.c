@@ -446,27 +446,30 @@ static void process_application_logic(void)
      */
 
     /* Example: simulated charge profile for testing without hardware */
-    static uint16_t sim_voltage = 50;   /* Match target voltage for precharge test */
+    static uint16_t sim_voltage = 50;   /* Vehicle starts at batt V; station resets below */
     static int16_t  sim_current = 0;    /* Starting at 0A */
 
-    if (g_fsm_ctx.state == CHADEMO_STATE_PRECHARGE ||
-        g_fsm_ctx.state == CHADEMO_STATE_CHARGING) {
-        /* Simulate voltage tracking the active target */
-#if IS_VEHICLE
-        uint16_t target_v = g_fsm_ctx.tx.h102.target_battery_voltage_V;
-#else
-        /* EVSE tracks whatever the EV is asking for */
+#if IS_STATION
+    /* Station: no HV present until precharge starts (simulated PSU off) */
+    if (g_fsm_ctx.state < CHADEMO_STATE_PRECHARGE) {
+        sim_voltage = 0;
+    } else if (g_fsm_ctx.state == CHADEMO_STATE_PRECHARGE ||
+               g_fsm_ctx.state == CHADEMO_STATE_CHARGING) {
         uint16_t target_v = g_fsm_ctx.rx.h102_valid
             ? g_fsm_ctx.rx.h102.target_battery_voltage_V
             : 50;
-#endif
-        if (sim_voltage < target_v) {
-            sim_voltage++;
-        }
-        if (sim_voltage > target_v) {
-            sim_voltage--;
-        }
+        if (sim_voltage < target_v) sim_voltage++;
+        if (sim_voltage > target_v) sim_voltage--;
     }
+#else
+    /* Vehicle: voltage tracks target during precharge/charging */
+    if (g_fsm_ctx.state == CHADEMO_STATE_PRECHARGE ||
+        g_fsm_ctx.state == CHADEMO_STATE_CHARGING) {
+        uint16_t target_v = g_fsm_ctx.tx.h102.target_battery_voltage_V;
+        if (sim_voltage < target_v) sim_voltage++;
+        if (sim_voltage > target_v) sim_voltage--;
+    }
+#endif
 
     if (g_fsm_ctx.state == CHADEMO_STATE_CHARGING) {
         /* Simulate current following the request */
