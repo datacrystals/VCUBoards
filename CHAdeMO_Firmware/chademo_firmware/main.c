@@ -154,18 +154,18 @@ int main(void)
      * even if CAN initialization fails.
      */
     hal_gpio_init();
-    printf("[HAL] GPIO initialized — contactor OPEN, controls SAFE\r\n");
+    printf("[%s-HAL] GPIO initialized — contactor OPEN, controls SAFE\r\n", FSM_ROLE_STR);
     fflush(stdout);
 
     /* ---- Initialize CAN buses ---- */
-    printf("[CAN] Initializing CHAdeMO bus (CAN2 / SPI1)...\r\n");
+    printf("[%s-CAN] Initializing CHAdeMO bus (CAN2 / SPI1)...\r\n", FSM_ROLE_STR);
     fflush(stdout);
     if (!hal_can_init(CHADEMO_CAN_CHANNEL)) {
-        printf("[CAN] FATAL: MCP2515 #2 (CHAdeMO bus, CAN2/SPI1, CS=GPIO%d) NOT RESPONDING!\r\n",
-               PIN_CAN2_CS);
-        printf("[CAN] Check: 5V/GND to MCP2515 module, SPI1 wiring (SCK=GPIO10, MOSI=GPIO11, MISO=GPIO12), CS=GPIO14\r\n");
-        printf("[CAN] Also verify MCP2515 oscillator is %d MHz (config in chademo_config.h)\r\n",
-               MCP2515_OSC_MHZ);
+        printf("[%s-CAN] FATAL: MCP2515 #2 (CHAdeMO bus, CAN2/SPI1, CS=GPIO%d) NOT RESPONDING!\r\n",
+               FSM_ROLE_STR, PIN_CAN2_CS);
+        printf("[%s-CAN] Check: 5V/GND to MCP2515 module, SPI1 wiring (SCK=GPIO10, MOSI=GPIO11, MISO=GPIO12), CS=GPIO14\r\n", FSM_ROLE_STR);
+        printf("[%s-CAN] Also verify MCP2515 oscillator is %d MHz (config in chademo_config.h)\r\n",
+               FSM_ROLE_STR, MCP2515_OSC_MHZ);
         fflush(stdout);
         /* Fast blink invisible LED and print so we don't go silent */
         while (1) {
@@ -173,30 +173,30 @@ int main(void)
             sleep_ms(100);
             gpio_put(LED_PIN, 0);
             sleep_ms(100);
-            printf("[CAN] ERROR: MCP2515 #2 (CAN2/SPI1, CS=GPIO%d) not responding — check wiring/power\r\n",
-                   PIN_CAN2_CS);
+            printf("[%s-CAN] ERROR: MCP2515 #2 (CAN2/SPI1, CS=GPIO%d) not responding — check wiring/power\r\n",
+                   FSM_ROLE_STR, PIN_CAN2_CS);
             fflush(stdout);
             hal_watchdog_feed();
         }
     }
-    printf("[CAN] CHAdeMO CAN initialized OK (500 kbps, %d MHz crystal)\r\n", MCP2515_OSC_MHZ);
+    printf("[%s-CAN] CHAdeMO CAN initialized OK (500 kbps, %d MHz crystal)\r\n", FSM_ROLE_STR, MCP2515_OSC_MHZ);
     fflush(stdout);
 
     /* CAN1 is optional — used for internal BMS/monitoring */
-    printf("[CAN] Initializing internal bus (CAN1 / SPI0)...\r\n");
+    printf("[%s-CAN] Initializing internal bus (CAN1 / SPI0)...\r\n", FSM_ROLE_STR);
     fflush(stdout);
     if (!hal_can_init(INTERNAL_CAN_CHANNEL)) {
-        printf("[CAN] WARN: MCP2515 #1 (internal bus, CAN1/SPI0, CS=GPIO%d) not responding — continuing without it\r\n",
-               PIN_CAN1_CS);
+        printf("[%s-CAN] WARN: MCP2515 #1 (internal bus, CAN1/SPI0, CS=GPIO%d) not responding — continuing without it\r\n",
+               FSM_ROLE_STR, PIN_CAN1_CS);
     } else {
-        printf("[CAN] MCP2515 #1 (internal bus, CAN1/SPI0, CS=GPIO%d) initialized OK\r\n",
-               PIN_CAN1_CS);
+        printf("[%s-CAN] MCP2515 #1 (internal bus, CAN1/SPI0, CS=GPIO%d) initialized OK\r\n",
+               FSM_ROLE_STR, PIN_CAN1_CS);
     }
     fflush(stdout);
 
     /* ---- Initialize CHAdeMO state machine ---- */
     chademo_fsm_init(&g_fsm_ctx);
-    printf("[FSM] State machine initialized (role: %s)\r\n", FSM_ROLE_STR);
+    printf("[%s-FSM] State machine initialized\r\n", FSM_ROLE_STR);
     fflush(stdout);
 
     /* ---- Set initial battery parameters (VEHICLE role) ----
@@ -211,13 +211,13 @@ int main(void)
     chademo_fsm_set_target_current(&g_fsm_ctx, 2);   /* 2A initial request (charger offers 2A) */
     chademo_fsm_set_capacity_kwh(&g_fsm_ctx, 400);   /* 40.0 kWh pack */
     chademo_fsm_set_battery_soc(&g_fsm_ctx, 20);     /* Starting at 20% SOC */
-    printf("[BAT] Pack config: 350V min, 450V nom, 500V max, 40kWh (bench test)\r\n");
+    printf("[%s-BAT] Pack config: 350V min, 450V nom, 500V max, 40kWh (bench test)\r\n", FSM_ROLE_STR);
 #else
     /* STATION role: Set available output capability — lie big for bench test */
     chademo_fsm_set_target_voltage(&g_fsm_ctx, CHADEMO_MAX_VOLTAGE_V);
     chademo_fsm_set_target_current(&g_fsm_ctx, CHADEMO_MAX_CURRENT_A);
-    printf("[EVSE] Output capability: %dV, %dA (bench test — claims max)\r\n",
-           CHADEMO_MAX_VOLTAGE_V, CHADEMO_MAX_CURRENT_A);
+    printf("[%s-EVSE] Output capability: %dV, %dA (bench test — claims max)\r\n",
+           FSM_ROLE_STR, CHADEMO_MAX_VOLTAGE_V, CHADEMO_MAX_CURRENT_A);
 #endif
 
     printf("\r\n");
@@ -234,7 +234,7 @@ int main(void)
      * trigger a spurious reset.  1000 ms gives plenty of headroom.
      */
     hal_watchdog_init(1000);
-    printf("[WDT] Watchdog armed (1000 ms timeout)\r\n");
+    printf("[%s-WDT] Watchdog armed (1000 ms timeout)\r\n", FSM_ROLE_STR);
 
     /* ---- Main control loop (100 Hz) ---- */
     absolute_time_t next_loop_time = get_absolute_time();
@@ -252,51 +252,51 @@ int main(void)
         /* ---- 3. Handle significant FSM events ---- */
         switch (event) {
         case CHADEMO_EVENT_PLUG_INSERTED:
-            printf("[EVT] Plug inserted — starting CHAdeMO sequence\r\n");
+            printf("[%s-EVT] Plug inserted — starting CHAdeMO sequence\r\n", FSM_ROLE_STR);
 #if IS_STATION
             /* Reset CAN controller to clear any accumulated bus errors
              * from idle-state noise or previous failed handshakes */
             hal_can_reset(CHADEMO_CAN_CHANNEL);
             if (!hal_can_init(CHADEMO_CAN_CHANNEL)) {
-                printf("[CAN] FATAL: MCP2515 #2 reset failed after plug-in\r\n");
+                printf("[%s-CAN] FATAL: MCP2515 #2 reset failed after plug-in\r\n", FSM_ROLE_STR);
             } else {
-                printf("[CAN] MCP2515 #2 reset OK\r\n");
+                printf("[%s-CAN] MCP2515 #2 reset OK\r\n", FSM_ROLE_STR);
             }
 #endif
             break;
 
         case CHADEMO_EVENT_HANDSHAKE_COMPLETE:
-            printf("[EVT] CAN handshake complete\r\n");
+            printf("[%s-EVT] CAN handshake complete\r\n", FSM_ROLE_STR);
             break;
 
         case CHADEMO_EVENT_PARAMS_COMPATIBLE:
-            printf("[EVT] Parameters compatible — proceeding\r\n");
+            printf("[%s-EVT] Parameters compatible — proceeding\r\n", FSM_ROLE_STR);
             break;
 
         case CHADEMO_EVENT_INSULATION_OK:
-            printf("[EVT] Insulation test passed\r\n");
+            printf("[%s-EVT] Insulation test passed\r\n", FSM_ROLE_STR);
             break;
 
         case CHADEMO_EVENT_PRECHARGE_OK:
-            printf("[EVT] Pre-charge complete — contactors closing\r\n");
+            printf("[%s-EVT] Pre-charge complete — contactors closing\r\n", FSM_ROLE_STR);
             break;
 
         case CHADEMO_EVENT_CHARGING_STARTED:
-            printf("[EVT] CHARGING ACTIVE\r\n");
+            printf("[%s-EVT] CHARGING ACTIVE\r\n", FSM_ROLE_STR);
             break;
 
         case CHADEMO_EVENT_CHARGE_COMPLETE:
-            printf("[EVT] Charge complete — safe to unplug\r\n");
+            printf("[%s-EVT] Charge complete — safe to unplug\r\n", FSM_ROLE_STR);
             break;
 
         case CHADEMO_EVENT_FAULT: {
             const char *fault_name = chademo_fsm_fault_name(g_fsm_ctx.fault_reason);
-            printf("[EVT] FAULT: %s\r\n", fault_name);
+            printf("[%s-EVT] FAULT: %s\r\n", FSM_ROLE_STR, fault_name);
             break;
         }
 
         case CHADEMO_EVENT_UNPLUGGED:
-            printf("[EVT] Plug removed — returning to idle\r\n");
+            printf("[%s-EVT] Plug removed — returning to idle\r\n", FSM_ROLE_STR);
             break;
 
         default:
@@ -354,8 +354,8 @@ static void process_can_rx(void)
 
         /* Diagnostic: print every received frame so we can see if the bus
          * is alive but with unexpected IDs */
-        printf("[CAN] RX id=0x%03lX len=%u data=%02X %02X %02X %02X %02X %02X %02X %02X\r\n",
-               (unsigned long)frame.id, frame.len,
+        printf("[%s-CAN] RX id=0x%03lX len=%u data=%02X %02X %02X %02X %02X %02X %02X %02X\r\n",
+               FSM_ROLE_STR, (unsigned long)frame.id, frame.len,
                frame.data[0], frame.data[1], frame.data[2], frame.data[3],
                frame.data[4], frame.data[5], frame.data[6], frame.data[7]);
 
@@ -414,8 +414,8 @@ static void process_can_tx(void)
             if ((now - last_tx_err_print) >= 500) {
                 last_tx_err_print = now;
                 uint8_t txb0 = hal_can_read_reg(CHADEMO_CAN_CHANNEL, MCP2515_REG_TXB0CTRL);
-                printf("[CAN] TX blocked: TXB0CTRL=0x%02X (TXREQ=%d)\r\n",
-                       txb0, (txb0 >> 3) & 1);
+                printf("[%s-CAN] TX blocked: TXB0CTRL=0x%02X (TXREQ=%d)\r\n",
+                       FSM_ROLE_STR, txb0, (txb0 >> 3) & 1);
             }
         }
     }
@@ -508,7 +508,7 @@ static void process_application_logic(void)
 #if IS_VEHICLE
     /* ---- Auto-shutdown when SOC reaches 80% (example) ---- */
     if (g_fsm_ctx.state == CHADEMO_STATE_CHARGING && g_fsm_ctx.battery_soc >= 80) {
-        printf("[APP] Target SOC reached (80%%) — requesting shutdown\r\n");
+        printf("[%s-APP] Target SOC reached (80%%) — requesting shutdown\r\n", FSM_ROLE_STR);
         chademo_fsm_request_shutdown(&g_fsm_ctx);
     }
 #endif
@@ -537,23 +537,23 @@ static void log_pin_changes(void)
 
     if (dcp != last_dcp) {
         last_dcp = dcp;
-        printf("[PIN] DCP (GPIO%u) = %s\r\n",
-               PIN_IN_DCP, dcp ? "HIGH (no vehicle)" : "LOW  (vehicle present)");
+        printf("[%s-PIN] DCP (GPIO%u) = %s\r\n",
+               FSM_ROLE_STR, PIN_IN_DCP, dcp ? "HIGH (no vehicle)" : "LOW  (vehicle present)");
     }
     if (ss1 != last_ss1) {
         last_ss1 = ss1;
-        printf("[PIN] SS1 (GPIO%u) = %s\r\n",
-               PIN_OUT_SS1, ss1 ? "HIGH" : "LOW");
+        printf("[%s-PIN] SS1 (GPIO%u) = %s\r\n",
+               FSM_ROLE_STR, PIN_OUT_SS1, ss1 ? "HIGH" : "LOW");
     }
     if (ss2 != last_ss2) {
         last_ss2 = ss2;
-        printf("[PIN] SS2 (GPIO%u) = %s\r\n",
-               PIN_OUT_SS2, ss2 ? "HIGH" : "LOW");
+        printf("[%s-PIN] SS2 (GPIO%u) = %s\r\n",
+               FSM_ROLE_STR, PIN_OUT_SS2, ss2 ? "HIGH" : "LOW");
     }
     if (contactor != last_contactor) {
         last_contactor = contactor;
-        printf("[PIN] CONTACTOR (GPIO%u) = %s\r\n",
-               PIN_CONTACTOR_OUT, contactor ? "CLOSED" : "OPEN");
+        printf("[%s-PIN] CONTACTOR (GPIO%u) = %s\r\n",
+               FSM_ROLE_STR, PIN_CONTACTOR_OUT, contactor ? "CLOSED" : "OPEN");
     }
 #else
     static bool last_pp        = false;
@@ -570,30 +570,30 @@ static void log_pin_changes(void)
 
     if (pp != last_pp) {
         last_pp = pp;
-        printf("[PIN] PP (GPIO%u) = %s\r\n",
-               PIN_IN_PP, pp ? "HIGH (no plug)" : "LOW  (plug inserted)");
+        printf("[%s-PIN] PP (GPIO%u) = %s\r\n",
+               FSM_ROLE_STR, PIN_IN_PP, pp ? "HIGH (no plug)" : "LOW  (plug inserted)");
     }
     if (ss1 != last_ss1) {
         last_ss1 = ss1;
-        printf("[PIN] SS1 (GPIO%u) = %s\r\n",
-               PIN_IN_SS1, ss1 ? "HIGH (charger idle)" : "LOW  (charger active)");
+        printf("[%s-PIN] SS1 (GPIO%u) = %s\r\n",
+               FSM_ROLE_STR, PIN_IN_SS1, ss1 ? "HIGH (charger idle)" : "LOW  (charger active)");
     }
     if (ss2 != last_ss2) {
         last_ss2 = ss2;
-        printf("[PIN] SS2 (GPIO%u) = %s\r\n",
-               PIN_IN_SS2, ss2 ? "HIGH (not charging)" : "LOW  (charge locked)");
+        printf("[%s-PIN] SS2 (GPIO%u) = %s\r\n",
+               FSM_ROLE_STR, PIN_IN_SS2, ss2 ? "HIGH (not charging)" : "LOW  (charge locked)");
     }
     if (dcp != last_dcp) {
         last_dcp = dcp;
-        printf("[PIN] DCP (GPIO%u) = %s (%s)\r\n",
-               PIN_OUT_DCP,
+        printf("[%s-PIN] DCP (GPIO%u) = %s (%s)\r\n",
+               FSM_ROLE_STR, PIN_OUT_DCP,
                dcp ? "HIGH" : "LOW ",
                dcp ? "de-asserted (inverted)" : "asserted (inverted)");
     }
     if (contactor != last_contactor) {
         last_contactor = contactor;
-        printf("[PIN] CONTACTOR (GPIO%u) = %s\r\n",
-               PIN_CONTACTOR_OUT, contactor ? "CLOSED" : "OPEN");
+        printf("[%s-PIN] CONTACTOR (GPIO%u) = %s\r\n",
+               FSM_ROLE_STR, PIN_CONTACTOR_OUT, contactor ? "CLOSED" : "OPEN");
     }
 #endif
 }
@@ -632,21 +632,21 @@ static void debug_print_mcp2515_diag(void)
     uint8_t rxb0c  = hal_can_read_reg(CHADEMO_CAN_CHANNEL, MCP2515_REG_RXB0CTRL);
     uint8_t rxb1c  = hal_can_read_reg(CHADEMO_CAN_CHANNEL, MCP2515_REG_RXB1CTRL);
 
-    printf("[DIAG] EFLG=0x%02X TEC=%u REC=%u INTF=0x%02X TXB0=0x%02X STAT=0x%02X RXB0=0x%02X RXB1=0x%02X\r\n",
-           eflg, tec, rec, intf, txb0, stat, rxb0c, rxb1c);
-    if (eflg & 0x20) printf("[DIAG] >>> BUS OFF <<<\r\n");
-    if (eflg & 0x10) printf("[DIAG] TX error passive\r\n");
-    if (eflg & 0x08) printf("[DIAG] RX error passive\r\n");
-    if (eflg & 0x04) printf("[DIAG] TX error warning\r\n");
-    if (txb0 & 0x08) printf("[DIAG] TXB0 pending (stuck)\r\n");
+    printf("[%s-DIAG] EFLG=0x%02X TEC=%u REC=%u INTF=0x%02X TXB0=0x%02X STAT=0x%02X RXB0=0x%02X RXB1=0x%02X\r\n",
+           FSM_ROLE_STR, eflg, tec, rec, intf, txb0, stat, rxb0c, rxb1c);
+    if (eflg & 0x20) printf("[%s-DIAG] >>> BUS OFF <<<\r\n", FSM_ROLE_STR);
+    if (eflg & 0x10) printf("[%s-DIAG] TX error passive\r\n", FSM_ROLE_STR);
+    if (eflg & 0x08) printf("[%s-DIAG] RX error passive\r\n", FSM_ROLE_STR);
+    if (eflg & 0x04) printf("[%s-DIAG] TX error warning\r\n", FSM_ROLE_STR);
+    if (txb0 & 0x08) printf("[%s-DIAG] TXB0 pending (stuck)\r\n", FSM_ROLE_STR);
 }
 
 static void debug_print_status(void)
 {
     const char *state_name = chademo_fsm_state_name(g_fsm_ctx.state);
 
-    printf("[STAT] State=%s | V=%dV | I=%dA | SOC=%d%% | CAN rx/tx=%lu/%lu | Loop=%lu\r\n",
-           state_name,
+    printf("[%s-STAT] State=%s | V=%dV | I=%dA | SOC=%d%% | CAN rx/tx=%lu/%lu | Loop=%lu\r\n",
+           FSM_ROLE_STR, state_name,
            g_fsm_ctx.measured_voltage_V,
            g_fsm_ctx.measured_current_A,
            g_fsm_ctx.battery_soc,
@@ -660,7 +660,8 @@ static void debug_print_status(void)
 #if IS_VEHICLE
     /* Show charger-reported values */
     if (g_fsm_ctx.rx.h109_valid) {
-        printf("[CHRG] Avail=%dV/%dA | Present=%dV/%dA | Status=0x%02X | Time=%ds\r\n",
+        printf("[%s-CHRG] Avail=%dV/%dA | Present=%dV/%dA | Status=0x%02X | Time=%ds\r\n",
+               FSM_ROLE_STR,
                g_fsm_ctx.rx.h108.avail_output_voltage_V,
                g_fsm_ctx.rx.h108.avail_output_current_A,
                g_fsm_ctx.rx.h109.present_output_voltage_V,
@@ -673,7 +674,8 @@ static void debug_print_status(void)
 #else
     /* Show EV-reported values */
     if (g_fsm_ctx.rx.h102_valid) {
-        printf("[EV]   MaxV=%dV | Target=%dV/%dA | Fault=0x%02X | Status=0x%02X | SOC=%d%%\r\n",
+        printf("[%s-EV]   MaxV=%dV | Target=%dV/%dA | Fault=0x%02X | Status=0x%02X | SOC=%d%%\r\n",
+               FSM_ROLE_STR,
                g_fsm_ctx.rx.h100.max_battery_voltage_V,
                g_fsm_ctx.rx.h102.target_battery_voltage_V,
                g_fsm_ctx.rx.h102.charging_current_request_A,

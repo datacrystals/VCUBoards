@@ -207,7 +207,7 @@
 
 #if CHADEMO_DEBUG
 #include <stdio.h>
-#define CHADEMO_LOG(fmt, ...) printf("[CHADEMO] " fmt "\r\n", ##__VA_ARGS__)
+#define CHADEMO_LOG(fmt, ...) printf("[CHADEMO-%s] " fmt "\r\n", FSM_ROLE_STR, ##__VA_ARGS__)
 #else
 #define CHADEMO_LOG(fmt, ...) ((void)0)
 #endif
