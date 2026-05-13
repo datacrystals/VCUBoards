@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--/928362/1553794/2.50/3/4/Power Supply/-->
+<quadcept_library>
+  <setting unit="mil" />
+  <textstyle name="Default" height="47.244094488189" strokewidth="7.8740157480315" charwidth="47.244094488189" />
+  <textstyle name="Dimension" height="19.6850393700787" strokewidth="0" charwidth="19.6850393700787" />
+  <textstyle name="H127W0635TH00762" height="50" strokewidth="3" charwidth="25" />
+  <textstyle name="H15W15TH02" height="59.0551181102362" strokewidth="7.8740157480315" charwidth="59.0551181102362" />
+  <padstyle name="c162_h108" surface="False" plated="True" isvia="False" nopaste="True" nomask="True" complex="False" holesize="42.51968503937">
+    <padshape layer="TOP" shape="round" width="63.779527559054" height="63.779527559054" />
+    <padshape layer="TOP_SOLDER_MASK" shape="round" width="71.653543307086" height="71.653543307086" />
+    <padshape layer="INNER" shape="round" width="63.779527559054" height="63.779527559054" />
+    <padshape layer="BOTTOM" shape="round" width="63.779527559054" height="63.779527559054" />
+    <padshape layer="BOTTOM_SOLDER_MASK" shape="round" width="71.653543307086" height="71.653543307086" />
+  </padstyle>
+  <footprint name="OKI78SR515W36EC" originx="0" originy="0" pickpointx="0" pickpointy="0">
+    <pcbpin number="1" name="1" style="c162_h108" originx="0" originy="0" rotation="90" />
+    <pcbpin number="2" name="2" style="c162_h108" originx="99.999999999999" originy="0" rotation="90" />
+    <pcbpin number="3" name="3" style="c162_h108" originx="200" originy="0" rotation="90" />
+    <line layer="TOP_ASSEMBLY" originx="-134.25196850394" originy="82.67716535433" endx="334.25196850393" endy="82.67716535433" width="7.8740157480314" />
+    <line layer="TOP_ASSEMBLY" originx="334.25196850393" originy="82.67716535433" endx="334.25196850393" endy="-311.02362204724" width="7.8740157480314" />
+    <line layer="TOP_ASSEMBLY" originx="334.25196850393" originy="-311.02362204724" endx="-134.25196850394" endy="-311.02362204724" width="7.8740157480314" />
+    <line layer="TOP_ASSEMBLY" originx="-134.25196850394" originy="-311.02362204724" endx="-134.25196850394" endy="82.67716535433" width="7.8740157480314" />
+    <line layer="TOP_SILKSCREEN" originx="-134.25196850394" originy="82.67716535433" endx="334.25196850393" endy="82.67716535433" width="3.9370078740157" />
+    <line layer="TOP_SILKSCREEN" originx="334.25196850393" originy="82.67716535433" endx="334.25196850393" endy="-311.02362204724" width="3.9370078740157" />
+    <line layer="TOP_SILKSCREEN" originx="334.25196850393" originy="-311.02362204724" endx="-134.25196850394" endy="-311.02362204724" width="3.9370078740157" />
+    <line layer="TOP_SILKSCREEN" originx="-134.25196850394" originy="-311.02362204724" endx="-134.25196850394" endy="82.67716535433" width="3.9370078740157" />
+    <line layer="TOP_PLACE_BOUND" originx="-153.93700787401" originy="129.92125984252" endx="353.93700787401" endy="129.92125984252" width="3.9370078740157" />
+    <line layer="TOP_PLACE_BOUND" originx="353.93700787401" originy="129.92125984252" endx="353.93700787401" endy="-330.70866141732" width="3.9370078740157" />
+    <line layer="TOP_PLACE_BOUND" originx="353.93700787401" originy="-330.70866141732" endx="-153.93700787401" endy="-330.70866141732" width="3.9370078740157" />
+    <line layer="TOP_PLACE_BOUND" originx="-153.93700787401" originy="-330.70866141732" endx="-153.93700787401" endy="129.92125984252" width="3.9370078740157" />
+    <line layer="TOP_SILKSCREEN" originx="-3.9370078740157" originy="106.29921259842" endx="-3.9370078740157" endy="106.29921259842" width="7.8740157480314" />
+    <arc layer="TOP_SILKSCREEN" originx="-5.4636959873285E-15" originy="106.29921259842" startangle="180.0" sweepangle="180.0" radius="3.9370078740157" width="7.8740157480314" />
+    <line layer="TOP_SILKSCREEN" originx="3.9370078740157" originy="106.29921259842" endx="3.9370078740157" endy="106.29921259842" width="7.8740157480314" />
+    <arc layer="TOP_SILKSCREEN" originx="-5.4636959873285E-15" originy="106.29921259842" startangle=".0" sweepangle="180.0" radius="3.9370078740157" width="7.8740157480314" />
+  </footprint>
+  <symbol name="OKI-78SR-5_1.5-W36E-C" originx="0" originy="0">
+    <line originx="200" originy="100" endx="800" endy="100" width="0" />
+    <line originx="800" originy="-300" endx="800" endy="100" width="0" />
+    <line originx="800" originy="-300" endx="200" endy="-300" width="0" />
+    <line originx="200" originy="100" endx="200" endy="-300" width="0" />
+    <sympin number="1" originx="200" originy="0" rotation="180" length="100" width="7.8740157480315" flipped="False">
+      <text name="pinname" originx="230" originy="0" style="Default" rotation="0" justify="left" flipped="False" hidden="False" data="+VIN" />
+      <text name="pindes" originx="140" originy="20" style="Default" rotation="0" justify="lowerright" flipped="False" hidden="False" data="1" />
+    </sympin>
+    <sympin number="2" originx="200" originy="-100" rotation="180" length="100" width="7.8740157480315" flipped="False">
+      <text name="pinname" originx="230" originy="-100" style="Default" rotation="0" justify="left" flipped="False" hidden="False" data="GND" />
+      <text name="pindes" originx="140" originy="-80" style="Default" rotation="0" justify="lowerright" flipped="False" hidden="False" data="2" />
+    </sympin>
+    <sympin number="3" originx="200" originy="-200" rotation="180" length="100" width="7.8740157480315" flipped="False">
+      <text name="pinname" originx="230" originy="-200" style="Default" rotation="0" justify="left" flipped="False" hidden="False" data="+VOUT" />
+      <text name="pindes" originx="140" originy="-180" style="Default" rotation="0" justify="lowerright" flipped="False" hidden="False" data="3" />
+    </sympin>
+  </symbol>
+  <component name="OKI-78SR-5_1.5-W36E-C" designatorprefix="PS" height="692.91338582676" footprint="OKI78SR515W36EC">
+    <comppin designator="1" sympin="1" pinswap="0" gateswap="0" gate="1" group="1" side="" type="Any" name="+VIN" />
+    <comppin designator="2" sympin="2" pinswap="0" gateswap="0" gate="1" group="1" side="" type="Any" name="GND" />
+    <comppin designator="3" sympin="3" pinswap="0" gateswap="0" gate="1" group="1" side="" type="Any" name="+VOUT" />
+    <attached_symbol gate="1" name="OKI-78SR-5_1.5-W36E-C" />
+    <pinmap designator="1" footprintpin="1" />
+    <pinmap designator="2" footprintpin="2" />
+    <pinmap designator="3" footprintpin="3" />
+    <text name="Datasheet" originx="0" originy="0" style="Default" rotation="0" justify="" flipped="False" hidden="True" data="" />
+    <text name="Description" originx="0" originy="0" style="Default" rotation="0" justify="" flipped="False" hidden="True" data="Murata Power Solutions Non-Isolated DC-DC Converter, 12V dc Input, 5V dc Output, 1.5A" />
+    <text name="Mouser Part Number" originx="0" originy="0" style="Default" rotation="0" justify="" flipped="False" hidden="True" data="580-OK78SR5/1.5W36EC" />
+    <text name="Mouser Price/Stock" originx="0" originy="0" style="Default" rotation="0" justify="" flipped="False" hidden="True" data="https://www.mouser.co.uk/ProductDetail/Murata-Power-Solutions/OKI-78SR-5-1.5-W36E-C?qs=AQlKX63v8RuEG78g20Kcig%3D%3D" />
+    <text name="Manufacturer_Name" originx="0" originy="0" style="Default" rotation="0" justify="" flipped="False" hidden="True" data="Murata Electronics" />
+    <text name="Manufacturer_Part_Number" originx="850" originy="200" style="Default" rotation="0" justify="left" flipped="False" hidden="False" data="OKI-78SR-5/1.5-W36E-C" />
+  </component>
+</quadcept_library>

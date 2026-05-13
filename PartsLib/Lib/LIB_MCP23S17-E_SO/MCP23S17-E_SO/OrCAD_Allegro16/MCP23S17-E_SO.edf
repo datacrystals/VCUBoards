@@ -6,7 +6,7 @@
   (keywordMap (keywordLevel 0))
   (status
     (written
-      (timestamp 2026 04 29 03 09 45)
+      (timestamp 2026 05 12 18 31 10)
       (dataOrigin "159060/1553794/2.50/28/3/Integrated Circuit")
       (program "SamacSys ECAD Model MCP23S17_E_SO"
         (version "6.1"))))

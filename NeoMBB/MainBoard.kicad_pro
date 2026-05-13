@@ -659,6 +659,18 @@
     [
       "06ebabe3-703a-45fb-87ef-421e54132c53",
       "Isolated Canbus Module3"
+    ],
+    [
+      "055b452d-0acb-4ee0-a90c-5ae9039450a7",
+      "VoltageSenseInputStage_Quad1"
+    ],
+    [
+      "a6bc4d0e-e0b8-4159-a91c-7c1926c3dfc5",
+      "HighSideOutputs"
+    ],
+    [
+      "bfdf1e33-829d-49c4-b2e1-db6908e499f7",
+      "VoltageSenseInputStage_Quad"
     ]
   ],
   "text_variables": {}

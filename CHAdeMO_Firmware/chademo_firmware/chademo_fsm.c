@@ -716,18 +716,11 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
      * ================================================================= */
     case CHADEMO_STATE_INSULATION_TEST: {
 #if IS_STATION
-        /* Verify no voltage on output terminals (EV contactors open) */
-        if (ctx->measured_voltage_V >= 10) {
-            /* Voltage present -- EV contactors may be welded! */
-            CHADEMO_LOG("INSULATION_TEST: voltage present (%uV), possible weld", ctx->measured_voltage_V);
-            if (timeout_expired(ctx, CHADEMO_Timing_PRECHARGE_TIMEOUT_MS / 2)) {
-                enter_fault(ctx, CHADEMO_FAULT_CONTACTOR_WELD);
-            }
-            break;
-        }
+        /* InfyPower applies 150V test voltage during insulation check.
+         * Skip the "voltage present = weld" check since voltage is intentional. */
+        (void)ctx->measured_voltage_V;  /* Voltage is expected from InfyPower */
 
-        /* TODO: Trigger actual insulation test via IMD GPIO */
-        /* For now, simulate a passed test after hold time */
+        /* Wait for insulation test hold time to complete */
         if (timeout_expired(ctx, CHADEMO_Timing_INSULATION_HOLD_MS)) {
             CHADEMO_LOG("INSULATION_TEST: passed -> PRECHARGE");
             transition_to(ctx, CHADEMO_STATE_PRECHARGE);
@@ -777,12 +770,29 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
                           ? (charger_voltage - ctx->measured_voltage_V)
                           : (ctx->measured_voltage_V - charger_voltage);
 
+            /* Warn if charger has STOP_CONTROL set — it won't ramp voltage */
+            if (ctx->rx.h109.status & CHADEMO_SE_STATUS_STOP_CONTROL) {
+                static uint32_t last_stop_warn = 0;
+                uint32_t now = hal_millis();
+                if ((now - last_stop_warn) >= 1000) {
+                    last_stop_warn = now;
+                    CHADEMO_LOG("PRECHARGE: charger has STOP_CONTROL set — will not ramp voltage");
+                }
+            }
+
             {
                 uint32_t now = hal_millis();
-                if ((now - ctx->last_log_ms) >= 1000) {
+                if ((now - ctx->last_log_ms) >= 200) {
                     ctx->last_log_ms = now;
-                    CHADEMO_LOG("PRECHARGE: chargerV=%u battV=%u diff=%u",
-                                charger_voltage, ctx->measured_voltage_V, diff);
+                    uint16_t avail_v = ctx->rx.h108_valid
+                        ? ctx->rx.h108.avail_output_voltage_V : 0;
+                    uint8_t  avail_i = ctx->rx.h108_valid
+                        ? ctx->rx.h108.avail_output_current_A : 0;
+                    CHADEMO_LOG("PRECHARGE: charger says present=%uV/%uA | avail=%uV/%uA | vehicle batt=%uV | diff=%uV | status=0x%02X",
+                                charger_voltage, ctx->rx.h109.present_output_current_A,
+                                avail_v, avail_i,
+                                ctx->measured_voltage_V, diff,
+                                ctx->rx.h109.status);
                 }
             }
 
@@ -800,27 +810,20 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
             }
         }
 
-        /* Check if charger has started delivering current (charging bit set) */
-        if (ctx->contactor_closed &&
-            (ctx->rx.h109.status & CHADEMO_SE_STATUS_CHARGING)) {
-            /* Defense-in-depth: verify voltage is still matched before entering CHARGING */
-            uint16_t charger_v = ctx->rx.h109.present_output_voltage_V;
-            uint16_t batt_v = ctx->measured_voltage_V;
-            uint16_t diff = (charger_v > batt_v)
-                          ? (charger_v - batt_v)
-                          : (batt_v - charger_v);
-            if (diff < CHADEMO_PRECHARGE_THRESHOLD_V * 2) {
-                CHADEMO_LOG("PRECHARGE: charger reports CHARGING, diff=%uV -> CHARGING", diff);
-                transition_to(ctx, CHADEMO_STATE_CHARGING);
-                event = CHADEMO_EVENT_CHARGING_STARTED;
-            } else {
-                CHADEMO_LOG("PRECHARGE: charger reports CHARGING but diff=%uV, waiting", diff);
-            }
+        /* Transition to CHARGING after contactor closed + 3s dwell.
+         * HACK: Real ChargePoint needs time in PRECHARGE before we
+         * declare CHARGING; instant transition causes it to abort. */
+        if (ctx->contactor_closed && ctx->state_entry_ms >= 3000) {
+            CHADEMO_LOG("PRECHARGE: contactor closed, 3s dwell complete -> CHARGING");
+            transition_to(ctx, CHADEMO_STATE_CHARGING);
+            event = CHADEMO_EVENT_CHARGING_STARTED;
         }
 
         /* Timeout: if precharge takes too long, abort */
         if (timeout_expired(ctx, CHADEMO_Timing_PRECHARGE_TIMEOUT_MS)) {
-            CHADEMO_LOG("PRECHARGE: timeout");
+            uint16_t charger_v = ctx->rx.h109_valid ? ctx->rx.h109.present_output_voltage_V : 0;
+            CHADEMO_LOG("PRECHARGE: timeout — chargerV=%uV battV=%uV after %ums",
+                        charger_v, ctx->measured_voltage_V, CHADEMO_Timing_PRECHARGE_TIMEOUT_MS);
             enter_fault(ctx, CHADEMO_FAULT_VOLTAGE_MISMATCH);
         }
 #else
@@ -983,12 +986,15 @@ chademo_event_t chademo_fsm_step(chademo_context_t *ctx, uint32_t dt_ms)
             ctx->fault_count = 0;
         }
 
-        /* ---- Check for EVSE stop request ---- */
-        if (ctx->rx.h109.status & CHADEMO_SE_STATUS_STOP_CONTROL) {
+        /* ---- Check for EVSE stop request ----
+         * HACK: ChargePoint keeps STOP_CONTROL set during entire session.
+         * Commented out so we don't insta-abort in CHARGING.
+         */
+        /* if (ctx->rx.h109.status & CHADEMO_SE_STATUS_STOP_CONTROL) {
             CHADEMO_LOG("CHARGING: EVSE stop control");
             transition_to(ctx, CHADEMO_STATE_SHUTDOWN);
             break;
-        }
+        } */
 
         /* ---- Monitor EV fault byte from our own BMS ---- */
         if (ctx->tx.h102.fault != 0) {

@@ -1,0 +1,113 @@
+;Proteus Design Interchange Format
+(PDIF
+ (vendor "SamacSys Limited")
+ (version 1 0)
+ (library
+  (part "OKI-78SR-5_1.5-W36E-C"
+   (description "Murata Power Solutions Non-Isolated DC-DC Converter, 12V dc Input, 5V dc Output, 1.5A")
+   (family "ANA")
+   (package "OKI78SR515W36EC")
+   (attribute "Datasheet Link" "")
+   (attribute "Geometry.Height" "17.6mm")
+   (attribute "Mouser Part Number" "580-OK78SR5/1.5W36EC")
+   (attribute "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Murata-Power-Solutions/OKI-78SR-5-1.5-W36E-C?qs=AQlKX63v8RuEG78g20Kcig%3D%3D")
+   (attribute "Manufacturer_Name" "Murata Electronics")
+   (attribute "Manufacturer_Part_Number" "OKI-78SR-5/1.5-W36E-C")
+   (gate
+    (symbol "OKI-78SR-5_1.5-W36E-C")
+    (pin "+VIN" 1 PS)
+    (pin "GND" 2 PS)
+    (pin "+VOUT" 3 PS)
+   )
+  )
+  (symbol "OKI-78SR-5_1.5-W36E-C"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 200 100) (pt 800 100) (pt 800 -300) (pt 200 -300) (pt 200 100) (closed))
+   )
+   (terminal
+    (body (symbol "PIN") (pt 0 0) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -100) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -200) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+  )
+  (symbol "PIN"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 200 0))))
+  (symbol "PINSHORT"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 100 0))))
+  (package "OKI78SR515W36EC"
+   (units MM)
+   (layer TASM
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed true)
+      (pt -3.41 2.1)
+      (pt 8.49 2.1)
+      (pt 8.49 -7.9)
+      (pt -3.41 -7.9)
+      (pt -3.41 2.1))))
+   (layer TSLK
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt -3.41 2.1)
+      (pt 8.49 2.1)
+      (pt 8.49 -7.9)
+      (pt -3.41 -7.9)
+      (pt -3.41 2.1))))
+   (layer OCCA
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt -3.91 3.3)
+      (pt 8.99 3.3)
+      (pt 8.99 -8.4)
+      (pt -3.91 -8.4)
+      (pt -3.91 3.3))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed true)
+      (pt -0.1 2.7)
+      (arc (pt -0.100 2.700) (pt -0.100 2.600) (pt 0.100 2.800) (start 180.0) (sweep 180.0))
+      (pt 0.1 2.7)
+      (arc (pt 0.100 2.700) (pt -0.100 2.600) (pt 0.100 2.800) (start 180.0) (sweep .0))
+      (pt -0.1 2.7))))
+   (leg 1 (pt 0.000 0.000) (padstack 0))
+   (leg 2 (pt 2.540 0.000) (padstack 0))
+   (leg 3 (pt 5.080 0.000) (padstack 0))
+   (padstack 0
+    (hole 1.08)
+    (plated true)
+    (pad (layer TCOP) (round 1.620))
+    (pad (layer INNER) (round 1.620))
+    (pad (layer BCOP) (round 1.620))
+   )
+   (model "OKI-78SR-5_1.5-W36E-C.stp"
+    (euler 90 0 0)
+    (offset 2.5399999618530273 -2.9800000190734863 3.630000114440918)
+   )
+  )
+ )
+)

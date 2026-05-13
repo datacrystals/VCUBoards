@@ -1,0 +1,13 @@
+(unit MM)
+
+(package "TBD62783AFG_EL"
+    (type UNDEF)
+    (uver 2)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (utime 2020-09-28-09:59:15)
+    (mountForm default
+        (footprintRef "SOIC127P1030X245-18N")
+        (spec "System")
+    )
+)

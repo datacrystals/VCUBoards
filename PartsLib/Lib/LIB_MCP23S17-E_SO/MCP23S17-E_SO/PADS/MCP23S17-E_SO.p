@@ -1,7 +1,7 @@
 *PADS-LIBRARY-PART-TYPES-V9*
 
 MCP23S17-E_SO SOIC127P1030X265-28N I ANA 7 1 0 0 0
-TIMESTAMP 2026.04.29.03.09.45
+TIMESTAMP 2026.05.12.18.31.10
 "Mouser Part Number" 579-MCP23S17-E/SO
 "Mouser Price/Stock" https://www.mouser.co.uk/ProductDetail/Microchip-Technology/MCP23S17-E-SO?qs=usxtMOJb1RzJScThsWtScg%3D%3D
 "Manufacturer_Name" Microchip

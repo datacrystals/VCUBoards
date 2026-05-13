@@ -1,0 +1,14 @@
+# Target labels
+ picotoolBuild
+# Source files and their labels
+/home/tliao/Desktop/VCUBoards/Energica_Display_Test/chademo_firmware/build/pico-sdk/src/rp2350/boot_stage2/CMakeFiles/picotoolBuild
+/home/tliao/Desktop/VCUBoards/Energica_Display_Test/chademo_firmware/build/pico-sdk/src/rp2350/boot_stage2/CMakeFiles/picotoolBuild.rule
+/home/tliao/Desktop/VCUBoards/Energica_Display_Test/chademo_firmware/build/pico-sdk/src/rp2350/boot_stage2/CMakeFiles/picotoolBuild-complete.rule
+/home/tliao/Desktop/VCUBoards/Energica_Display_Test/chademo_firmware/build/pico-sdk/src/rp2350/boot_stage2/picotool/src/picotoolBuild-stamp/picotoolBuild-build.rule
+/home/tliao/Desktop/VCUBoards/Energica_Display_Test/chademo_firmware/build/pico-sdk/src/rp2350/boot_stage2/picotool/src/picotoolBuild-stamp/picotoolBuild-configure.rule
+/home/tliao/Desktop/VCUBoards/Energica_Display_Test/chademo_firmware/build/pico-sdk/src/rp2350/boot_stage2/picotool/src/picotoolBuild-stamp/picotoolBuild-download.rule
+/home/tliao/Desktop/VCUBoards/Energica_Display_Test/chademo_firmware/build/pico-sdk/src/rp2350/boot_stage2/picotool/src/picotoolBuild-stamp/picotoolBuild-install.rule
+/home/tliao/Desktop/VCUBoards/Energica_Display_Test/chademo_firmware/build/pico-sdk/src/rp2350/boot_stage2/picotool/src/picotoolBuild-stamp/picotoolBuild-mkdir.rule
+/home/tliao/Desktop/VCUBoards/Energica_Display_Test/chademo_firmware/build/pico-sdk/src/rp2350/boot_stage2/picotool/src/picotoolBuild-stamp/picotoolBuild-patch.rule
+/home/tliao/Desktop/VCUBoards/Energica_Display_Test/chademo_firmware/build/pico-sdk/src/rp2350/boot_stage2/picotool/src/picotoolBuild-stamp/picotoolBuild-test.rule
+/home/tliao/Desktop/VCUBoards/Energica_Display_Test/chademo_firmware/build/pico-sdk/src/rp2350/boot_stage2/picotool/src/picotoolBuild-stamp/picotoolBuild-update.rule

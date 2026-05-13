@@ -49,6 +49,7 @@ set(SOURCES
     chademo_hal.c
     chademo_can.c
     chademo_fsm.c
+    chademo_infypower.c
 )
 
 # ---- Executable ----

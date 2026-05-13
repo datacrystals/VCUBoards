@@ -1,0 +1,4 @@
+# Energica CAN Log started 2026-05-02_18-26-01
+# Port: /dev/ttyACM0  Baud: 115200
+# Format: [TIME] TX/RX ID#DATA  (or user notes)
+

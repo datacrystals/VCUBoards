@@ -30,7 +30,7 @@ typedef struct {
     uint32_t    baud_hz;
 } can_hw_config_t;
 
-static const can_hw_config_t can_cfg[2] = {
+const can_hw_config_t can_cfg[2] = {
     [HAL_CAN_CH1] = {
         .spi      = MCP2515_SPI_PORT,      /* spi0 */
         .pin_sck  = PIN_CAN1_SPI_SCK,      /* GPIO2 */
@@ -178,6 +178,15 @@ static uint8_t spi_xfer_byte(const can_hw_config_t *cfg, uint8_t b)
     uint8_t rx;
     spi_write_read_blocking(cfg->spi, &b, &rx, 1);
     return rx;
+}
+
+/* ============================================================================
+ * CAN HW CONFIG ACCESSOR
+ * ============================================================================ */
+
+const void *hal_can_get_cfg(hal_can_channel_t ch)
+{
+    return &can_cfg[ch];
 }
 
 /* ============================================================================
@@ -358,16 +367,29 @@ bool hal_can_send(hal_can_channel_t ch, const chademo_can_frame_t *frame)
 
         if (!(txbctrl & 0x08)) {
             /* Buffer is free - use it */
-            uint8_t sidh = (uint8_t)((frame->id >> 3) & 0xFF);
-            uint8_t sidl = (uint8_t)((frame->id & 0x07) << 5);
+            uint8_t sidh, sidl, eid8, eid0;
+            if (frame->id & 0x80000000UL) {
+                /* Extended frame (29-bit ID) */
+                uint32_t eid = frame->id & 0x1FFFFFFFUL;
+                sidh = (uint8_t)((eid >> 21) & 0xFF);
+                sidl = (uint8_t)(((eid >> 18) & 0x07) << 5) | 0x08 | ((eid >> 16) & 0x03);
+                eid8 = (uint8_t)((eid >> 8) & 0xFF);
+                eid0 = (uint8_t)(eid & 0xFF);
+            } else {
+                /* Standard frame (11-bit ID) */
+                sidh = (uint8_t)((frame->id >> 3) & 0xFF);
+                sidl = (uint8_t)((frame->id & 0x07) << 5);
+                eid8 = 0x00;
+                eid0 = 0x00;
+            }
 
             cs_low(cfg);
             spi_xfer_byte(cfg, MCP2515_CMD_WRITE);
             spi_xfer_byte(cfg, sidh_reg[idx]);
             spi_xfer_byte(cfg, sidh);
             spi_xfer_byte(cfg, sidl);
-            spi_xfer_byte(cfg, 0x00);       /* EID8 (not used, std frame) */
-            spi_xfer_byte(cfg, 0x00);       /* EID0 */
+            spi_xfer_byte(cfg, eid8);
+            spi_xfer_byte(cfg, eid0);
             spi_xfer_byte(cfg, frame->len); /* DLC */
             for (int i = 0; i < frame->len; i++) {
                 spi_xfer_byte(cfg, frame->data[i]);
@@ -395,16 +417,27 @@ bool hal_can_send(hal_can_channel_t ch, const chademo_can_frame_t *frame)
             txbctrl = hal_can_read_reg(ch, ctrl_reg[idx]);
             if (!(txbctrl & 0x08)) {
                 /* Abort succeeded - use this buffer now */
-                uint8_t sidh = (uint8_t)((frame->id >> 3) & 0xFF);
-                uint8_t sidl = (uint8_t)((frame->id & 0x07) << 5);
+                uint8_t sidh, sidl, eid8, eid0;
+                if (frame->id & 0x80000000UL) {
+                    uint32_t eid = frame->id & 0x1FFFFFFFUL;
+                    sidh = (uint8_t)((eid >> 21) & 0xFF);
+                    sidl = (uint8_t)(((eid >> 18) & 0x07) << 5) | 0x08 | ((eid >> 16) & 0x03);
+                    eid8 = (uint8_t)((eid >> 8) & 0xFF);
+                    eid0 = (uint8_t)(eid & 0xFF);
+                } else {
+                    sidh = (uint8_t)((frame->id >> 3) & 0xFF);
+                    sidl = (uint8_t)((frame->id & 0x07) << 5);
+                    eid8 = 0x00;
+                    eid0 = 0x00;
+                }
 
                 cs_low(cfg);
                 spi_xfer_byte(cfg, MCP2515_CMD_WRITE);
                 spi_xfer_byte(cfg, sidh_reg[idx]);
                 spi_xfer_byte(cfg, sidh);
                 spi_xfer_byte(cfg, sidl);
-                spi_xfer_byte(cfg, 0x00);
-                spi_xfer_byte(cfg, 0x00);
+                spi_xfer_byte(cfg, eid8);
+                spi_xfer_byte(cfg, eid0);
                 spi_xfer_byte(cfg, frame->len);
                 for (int i = 0; i < frame->len; i++) {
                     spi_xfer_byte(cfg, frame->data[i]);
@@ -465,9 +498,20 @@ bool hal_can_recv(hal_can_channel_t ch, chademo_can_frame_t *frame)
     }
     cs_high(cfg);
 
-    /* Parse standard ID */
-    uint16_t sid = ((uint16_t)buf[0] << 3) | ((uint16_t)(buf[1] & 0xE0) >> 5);
-    frame->id  = (uint32_t)sid;
+    /* Parse ID — detect extended vs standard */
+    if (buf[1] & 0x08) {
+        /* Extended frame (29-bit ID) */
+        uint32_t eid = ((uint32_t)buf[0] << 21)
+                     | (((uint32_t)(buf[1] & 0xE0)) << 13)
+                     | (((uint32_t)(buf[1] & 0x03)) << 16)
+                     | ((uint32_t)buf[2] << 8)
+                     | buf[3];
+        frame->id = eid | 0x80000000UL;
+    } else {
+        /* Standard frame (11-bit ID) */
+        uint16_t sid = ((uint16_t)buf[0] << 3) | ((uint16_t)(buf[1] & 0xE0) >> 5);
+        frame->id = (uint32_t)sid;
+    }
     frame->len = buf[4] & 0x0F;
     if (frame->len > 8) frame->len = 8;
     memcpy(frame->data, &buf[5], frame->len);

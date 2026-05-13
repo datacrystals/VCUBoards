@@ -1,0 +1,16 @@
+.TBD62783AFG_EL :1 ;Gate Drivers DMOS Transistor Array8-CH, 50V/0.5A
+SOIC127P1030X245-18N
+*STM Q
+*NGS
+*PLB 1="I1" 2="I2" 3="I3" 4="I4" 5="I5" 6="I6" 7="I7" 8="I8" 9="VCC" 10="GND" 11="O8" 12="O7" 13="O6" 14="O5" 15="O4" 16="O3" 17="O2" 18="O1"
+*MXP 18
+*DFN TBD62783AFG_EL
+~!Mouser Part Number (757-TBD62783AFGEL)
+~!Link Mouser Price/Stock (https://www.mouser.co.uk/ProductDetail/Toshiba/TBD62783AFGEL?qs=fSnNYG2PaKJyPGRf9HI0JA%3D%3D)
+~!Manufacturer_Name (Toshiba)
+~!Manufacturer_Part_Number (TBD62783AFG,EL)
+~!Link Datasheet (-)
+~!Height (2.45mm)
+~!3D_Model (TBD62783AFG,EL)
+TBD62783AFG_EL
+1.1!I 2.1!I 3.1!I 4.1!I 5.1!I 6.1!I 7.1!I 8.1!I 9.1!P 18.1!Y 17.1!Y 16.1!Y 15.1!Y 14.1!Y 13.1!Y 12.1!Y 11.1!Y 10.1!G 

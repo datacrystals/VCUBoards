@@ -1,0 +1,9 @@
+Manufacturer=Murata Electronics
+PartNumber=OKI-78SR-5/1.5-W36E-C
+PartCategory=Power Supply
+PackageCategory=Other
+PinCount=3
+Version=1.1
+Released=2019-04-15 11:01:37
+Downloaded=2026-05-11 05:14:51
+3D=Y

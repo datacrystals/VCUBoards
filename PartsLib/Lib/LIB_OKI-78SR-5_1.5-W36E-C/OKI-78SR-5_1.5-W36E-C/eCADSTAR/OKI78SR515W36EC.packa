@@ -1,0 +1,13 @@
+(unit MM)
+
+(package "OKI-78SR-5_1_5-W36E-C"
+    (type UNDEF)
+    (uver 2)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (utime 2019-04-15-11:01:37)
+    (mountForm default
+        (footprintRef "OKI78SR515W36EC")
+        (spec "System")
+    )
+)

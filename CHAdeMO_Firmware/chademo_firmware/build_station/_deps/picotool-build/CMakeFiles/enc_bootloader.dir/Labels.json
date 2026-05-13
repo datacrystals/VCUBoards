@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build_station/_deps/picotool-build/CMakeFiles/enc_bootloader"
+		},
+		{
+			"file" : "/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build_station/_deps/picotool-build/CMakeFiles/enc_bootloader.rule"
+		},
+		{
+			"file" : "/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build_station/_deps/picotool-build/CMakeFiles/enc_bootloader-complete.rule"
+		},
+		{
+			"file" : "/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build_station/_deps/picotool-build/enc_bootloader/src/enc_bootloader-stamp/enc_bootloader-build.rule"
+		},
+		{
+			"file" : "/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build_station/_deps/picotool-build/enc_bootloader/src/enc_bootloader-stamp/enc_bootloader-configure.rule"
+		},
+		{
+			"file" : "/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build_station/_deps/picotool-build/enc_bootloader/src/enc_bootloader-stamp/enc_bootloader-download.rule"
+		},
+		{
+			"file" : "/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build_station/_deps/picotool-build/enc_bootloader/src/enc_bootloader-stamp/enc_bootloader-install.rule"
+		},
+		{
+			"file" : "/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build_station/_deps/picotool-build/enc_bootloader/src/enc_bootloader-stamp/enc_bootloader-mkdir.rule"
+		},
+		{
+			"file" : "/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build_station/_deps/picotool-build/enc_bootloader/src/enc_bootloader-stamp/enc_bootloader-patch.rule"
+		},
+		{
+			"file" : "/home/tliao/Desktop/VCUBoards/CHAdeMO_Firmware/chademo_firmware/build_station/_deps/picotool-build/enc_bootloader/src/enc_bootloader-stamp/enc_bootloader-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"enc_bootloader"
+		],
+		"name" : "enc_bootloader"
+	}
+}

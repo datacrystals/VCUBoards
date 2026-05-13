@@ -1,0 +1,9 @@
+Manufacturer=Toshiba
+PartNumber=TBD62783AFG,EL
+PartCategory=Transistor
+PackageCategory=Small Outline Packages
+PinCount=18
+Version=2.1
+Released=2019-08-26 13:28:43
+Downloaded=2026-05-11 05:00:38
+3D=Y

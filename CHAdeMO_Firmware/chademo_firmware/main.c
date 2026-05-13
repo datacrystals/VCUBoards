@@ -47,6 +47,9 @@
 #include "chademo_hal.h"
 #include "chademo_can.h"
 #include "chademo_fsm.h"
+#if IS_STATION
+#include "chademo_infypower.h"
+#endif
 
 #include <stdio.h>
 #include <string.h>
@@ -182,17 +185,28 @@ int main(void)
     printf("[%s-CAN] CHAdeMO CAN initialized OK (500 kbps, %d MHz crystal)\r\n", FSM_ROLE_STR, MCP2515_OSC_MHZ);
     fflush(stdout);
 
-    /* CAN1 is optional — used for internal BMS/monitoring */
+    /* CAN1: InfyPower DC module bus (station only) or internal BMS (vehicle) */
+#if IS_STATION
+    printf("[%s-INFY] Initializing InfyPower DC module bus (CAN1 / SPI0 / 125kbps)...\r\n", FSM_ROLE_STR);
+    fflush(stdout);
+    if (!infypower_init()) {
+        printf("[%s-INFY] WARN: InfyPower MCP2515 (CAN1/SPI0, CS=GPIO%d) NOT RESPONDING!\r\n",
+               FSM_ROLE_STR, PIN_CAN1_CS);
+        printf("[%s-INFY] Check: 5V/GND to MCP2515, SPI0 wiring, oscillator crystal\r\n", FSM_ROLE_STR);
+    } else {
+        printf("[%s-INFY] InfyPower CAN initialized OK (125 kbps)\r\n", FSM_ROLE_STR);
+    }
+    fflush(stdout);
+#else
     printf("[%s-CAN] Initializing internal bus (CAN1 / SPI0)...\r\n", FSM_ROLE_STR);
     fflush(stdout);
     if (!hal_can_init(INTERNAL_CAN_CHANNEL)) {
-        printf("[%s-CAN] WARN: MCP2515 #1 (internal bus, CAN1/SPI0, CS=GPIO%d) not responding — continuing without it\r\n",
-               FSM_ROLE_STR, PIN_CAN1_CS);
+        printf("[%s-CAN] WARN: MCP2515 #1 not responding — continuing without it\r\n", FSM_ROLE_STR);
     } else {
-        printf("[%s-CAN] MCP2515 #1 (internal bus, CAN1/SPI0, CS=GPIO%d) initialized OK\r\n",
-               FSM_ROLE_STR, PIN_CAN1_CS);
+        printf("[%s-CAN] MCP2515 #1 initialized OK\r\n", FSM_ROLE_STR);
     }
     fflush(stdout);
+#endif
 
     /* ---- Initialize CHAdeMO state machine ---- */
     chademo_fsm_init(&g_fsm_ctx);
@@ -455,6 +469,11 @@ static void process_application_logic(void)
     chademo_fsm_set_target_current(&g_fsm_ctx, 2);
     chademo_fsm_set_capacity_kwh(&g_fsm_ctx, 400);
     chademo_fsm_set_battery_soc(&g_fsm_ctx, 20);
+    /* Report measured battery voltage back to charger via 0x100 bytes 2-3 */
+    if (g_fsm_ctx.state >= CHADEMO_STATE_PRECHARGE &&
+        g_fsm_ctx.state <= CHADEMO_STATE_CHARGING) {
+        g_fsm_ctx.tx.h100.minimum_battery_voltage_V = g_fsm_ctx.measured_voltage_V;
+    }
 #else
     chademo_fsm_set_target_voltage(&g_fsm_ctx, CHADEMO_MAX_VOLTAGE_V);
     chademo_fsm_set_target_current(&g_fsm_ctx, CHADEMO_MAX_CURRENT_A);
@@ -465,16 +484,83 @@ static void process_application_logic(void)
     static int16_t  sim_current = 0;    /* Starting at 0A */
 
 #if IS_STATION
-    /* Station: no HV present until precharge starts (simulated PSU off) */
-    if (g_fsm_ctx.state < CHADEMO_STATE_PRECHARGE) {
-        sim_voltage = 0;
-    } else if (g_fsm_ctx.state == CHADEMO_STATE_PRECHARGE ||
-               g_fsm_ctx.state == CHADEMO_STATE_CHARGING) {
-        uint16_t target_v = g_fsm_ctx.rx.h102_valid
-            ? g_fsm_ctx.rx.h102.target_battery_voltage_V
-            : 50;
+    /* Station: non-blocking InfyPower DC module control */
+    static uint8_t  infy_phase = 0;   /* 0=off, 1=set_sent, 2=on_sent, 3=running */
+    static uint32_t infy_phase_ms = 0;
+    static uint16_t infy_target_v = 0;
+    static uint8_t  infy_target_a = 0;
+
+    /* Determine target voltage/current based on state */
+    uint16_t target_v = 0;
+    uint8_t  target_a = 0;
+
+    if (g_fsm_ctx.state == CHADEMO_STATE_INSULATION_TEST) {
+        /* Apply 150V during insulation test */
+        target_v = 150;
+        target_a = 0;
+    } else if (g_fsm_ctx.state >= CHADEMO_STATE_PRECHARGE &&
+               g_fsm_ctx.state <= CHADEMO_STATE_CHARGING) {
+        target_v = g_fsm_ctx.rx.h102_valid
+            ? g_fsm_ctx.rx.h102.target_battery_voltage_V : 50;
+        target_a = g_fsm_ctx.rx.h102_valid
+            ? g_fsm_ctx.rx.h102.charging_current_request_A : 0;
+    }
+
+    /* Clamp to InfyPower limits */
+    if (target_v > INFYPOWER_VOLTAGE_MAX_V) target_v = INFYPOWER_VOLTAGE_MAX_V;
+    if (target_a > INFYPOWER_CURRENT_MAX_A) target_a = INFYPOWER_CURRENT_MAX_A;
+
+    /* Non-blocking startup / shutdown state machine */
+    if (target_v > 0) {
+        if (infy_phase == 0) {
+            infypower_cmd_set_output(target_v, target_a);
+            infy_phase = 1;
+            infy_phase_ms = hal_millis();
+            printf("[STATION-INFY] SET OUTPUT: %uV/%uA\r\n", target_v, target_a);
+        } else if (infy_phase == 1) {
+            if ((hal_millis() - infy_phase_ms) >= INFYPOWER_STARTUP_DELAY_MS) {
+                infypower_cmd_onoff(true);
+                infy_phase = 2;
+                infy_phase_ms = hal_millis();
+                printf("[STATION-INFY] MODULE ON\r\n");
+            }
+        } else if (infy_phase == 2) {
+            if ((hal_millis() - infy_phase_ms) >= INFYPOWER_STARTUP_DELAY_MS) {
+                infy_phase = 3;
+                infy_target_v = target_v;
+                infy_target_a = target_a;
+                printf("[STATION-INFY] RUNNING\r\n");
+            }
+        } else if (infy_phase == 3) {
+            if (target_v != infy_target_v || target_a != infy_target_a) {
+                infypower_cmd_set_output(target_v, target_a);
+                infy_target_v = target_v;
+                infy_target_a = target_a;
+            }
+            infypower_heartbeat(target_v, target_a);
+        }
+    } else {
+        if (infy_phase > 0) {
+            infypower_cmd_onoff(false);
+            infy_phase = 0;
+            sim_voltage = 0;
+            sim_current = 0;
+            printf("[STATION-INFY] MODULE OFF\r\n");
+        }
+    }
+
+    /* Poll actual output and update measured values */
+    uint16_t actual_v = 0;
+    uint8_t  actual_a = 0;
+    if (infypower_poll_rx(&actual_v, &actual_a)) {
+        sim_voltage = actual_v;
+        sim_current = (int16_t)actual_a;
+    } else if (infy_phase >= 2) {
         if (sim_voltage < target_v) { sim_voltage += 5; if (sim_voltage > target_v) sim_voltage = target_v; }
         if (sim_voltage > target_v) { sim_voltage -= 5; if (sim_voltage < target_v) sim_voltage = target_v; }
+    } else {
+        sim_voltage = 0;
+        sim_current = 0;
     }
 #else
     /* Vehicle: voltage tracks target during precharge/charging */

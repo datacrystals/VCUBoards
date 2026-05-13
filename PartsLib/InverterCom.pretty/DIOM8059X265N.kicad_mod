@@ -176,7 +176,7 @@
 		(uuid "2a286bed-f68b-4b95-a4cb-2ef93173a1d8")
 	)
 	(embedded_fonts no)
-	(model "S3N.stp"
+	(model "${KIPRJMOD}/PartsLib/3D/S3N.stp"
 		(offset
 			(xyz 0 0 0)
 		)

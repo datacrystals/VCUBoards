@@ -1,0 +1,10 @@
+(unit MM)
+
+(package "OKI78SR515W36EC"
+    (type UNDEF)
+    (uver 2)
+    (mountForm default
+        (footprintRef "OKI78SR515W36EC")
+        (spec "default")
+    )
+)

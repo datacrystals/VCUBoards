@@ -1,0 +1,16 @@
+.OKI-78SR-5_1.5-W36E-C :1 ;Murata Power Solutions Non-Isolated DC-DC Converter, 12V dc Input, 5V dc Output, 1.5A
+OKI78SR515W36EC
+*STM PS
+*NGS
+*PLB 1="+VIN" 2="GND" 3="+VOUT"
+*MXP 3
+*DFN OKI-78SR-5_1.5-W36E-C
+~!Mouser Part Number (580-OK78SR5/1.5W36EC)
+~!Link Mouser Price/Stock (https://www.mouser.co.uk/ProductDetail/Murata-Power-Solutions/OKI-78SR-5-1.5-W36E-C?qs=AQlKX63v8RuEG78g20Kcig%3D%3D)
+~!Manufacturer_Name (Murata Electronics)
+~!Manufacturer_Part_Number (OKI-78SR-5/1.5-W36E-C)
+~!Link Datasheet (-)
+~!Height (17.6mm)
+~!3D_Model (OKI-78SR-5_1.5-W36E-C)
+OKI-78SR-5_1.5-W36E-C
+1.1!U 2.1!U 3.1!U 

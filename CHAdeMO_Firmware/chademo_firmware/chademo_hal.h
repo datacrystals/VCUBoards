@@ -274,6 +274,9 @@ void hal_can_bit_modify(hal_can_channel_t ch, uint8_t reg, uint8_t mask, uint8_t
 /** Set MCP2515 mode (CONFIG, NORMAL, LOOPBACK) */
 void hal_can_set_mode(hal_can_channel_t ch, uint8_t mode);
 
+/** Get hardware config for a CAN channel (for InfyPower driver) */
+const void *hal_can_get_cfg(hal_can_channel_t ch);
+
 /** Send a CAN frame (blocking, returns true on success) */
 bool hal_can_send(hal_can_channel_t ch, const chademo_can_frame_t *frame);
 

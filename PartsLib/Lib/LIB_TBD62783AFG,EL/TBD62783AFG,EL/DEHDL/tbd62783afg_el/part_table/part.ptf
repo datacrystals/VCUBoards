@@ -1,0 +1,11 @@
+FILE_TYPE = MULTI_PHYS_TABLE;
+
+PART 'TBD62783AFG_EL'
+CLASS = DISCRETE
+{========================================================================================}
+:"MANUFACTURER_NAME", "MANUFACTURER_PART_NUMBER"= "PART_NUMBER", "JEDEC_TYPE", "PACK_TYPE", "MOUSER_PART_NUMBER", "MOUSER_PRICE/STOCK", "DESCRIPTION", "DATASHEET", "HEIGHT";
+{========================================================================================}
+ "Toshiba", "TBD62783AFG,EL" (!) = "", "SOIC127P1030X245-18N", "Small Outline Packages", "757-TBD62783AFGEL", "https://www.mouser.co.uk/ProductDetail/Toshiba/TBD62783AFGEL?qs=fSnNYG2PaKJyPGRf9HI0JA%3D%3D", "Gate Drivers DMOS Transistor Array8-CH, 50V/0.5A", "", "2.45 mm"
+END_PART
+
+END.

@@ -1,0 +1,567 @@
+/**
+ * @file  main.c
+ * @brief CHAdeMO Controller — Main Application Loop
+ * @details
+ *   Entry point for the RP2040 CHAdeMO firmware. Initializes all
+ *   subsystems, then runs the main control loop at 100Hz (10ms tick).
+ *
+ *   Architecture:
+ *   =============
+ *   +-------------------+     +-------------------+     +------------------+
+ *   |   HAL Layer       |<--->|   CAN Driver      |<--->|  MCP2515 (x2)    |
+ *   | (chademo_hal.c)   |     | (chademo_can.c)   |     |  SPI0 + SPI1     |
+ *   +-------------------+     +-------------------+     +------------------+
+ *            ^                         ^
+ *            |                         |
+ *            v                         v
+ *   +-------------------+     +-------------------+
+ *   |   FSM Core        |<--->|   GPIO Control    |
+ *   | (chademo_fsm.c)   |     | (SS1/SS2/DCP/PP)  |
+ *   +-------------------+     +-------------------+
+ *            ^
+ *            |
+ *   +-------------------+
+ *   |   main.c (this)   |
+ *   |  100Hz main loop  |
+ *   +-------------------+
+ *
+ *   Compile-time role selection:
+ *     #define CHADEMO_ROLE_VEHICLE   → Build for EV
+ *     #define CHADEMO_ROLE_STATION   → Build for EVSE
+ *
+ *   Based on open-source references:
+ *   - furdog/chademo (generic CHAdeMO library)
+ *   - jamiejones85/ESP32-Chademo (EV conversion firmware)
+ *   - IEEE Std 2030.1.1-2015
+ */
+
+#include "pico/stdlib.h"
+#include "pico/binary_info.h"
+#include "hardware/gpio.h"
+#include "hardware/spi.h"
+#include "hardware/uart.h"
+#include "hardware/watchdog.h"
+#include "hardware/timer.h"
+
+#include "chademo_config.h"
+#include "chademo_hal.h"
+#include "chademo_can.h"
+#include "chademo_fsm.h"
+
+#include <stdio.h>
+#include <string.h>
+
+/* ============================================================================
+ * BUILD CONFIGURATION VALIDATION
+ * ============================================================================ */
+
+#ifndef CHADEMO_ROLE_VEHICLE
+#ifndef CHADEMO_ROLE_STATION
+#error "Must define CHADEMO_ROLE_VEHICLE or CHADEMO_ROLE_STATION"
+#endif
+#endif
+
+/* ============================================================================
+ * DEBUG UART
+ * ============================================================================
+ * Use UART0 (GPIO 0/1) for debug output at 115200 baud.
+ * This is separate from the SPI buses used for CAN.
+ */
+#define DEBUG_UART        uart0
+#define DEBUG_UART_TX_PIN 0
+#define DEBUG_UART_RX_PIN 1
+#define DEBUG_BAUDRATE    115200
+
+/* ============================================================================
+ * MAIN LOOP TIMING
+ * ============================================================================
+ * The CHAdeMO spec requires 100ms periodic CAN transmission.
+ * We run the main loop at 100Hz (10ms) to ensure timely processing
+ * while allowing 10 iterations per CAN transmission period.
+ */
+#define MAIN_LOOP_HZ      100
+#define MAIN_LOOP_PERIOD_MS (1000 / MAIN_LOOP_HZ)
+
+/* CAN transmission period: send one frame every 33ms to achieve
+ * ~100ms cycle for all 3 vehicle frames (or 50ms for 2 charger frames) */
+#define CAN_TX_PERIOD_MS  33
+
+/* CHAdeMO uses CAN2 (SPI1, GPIO10-14). CAN1 is for internal/BMS. */
+#define CHADEMO_CAN_CHANNEL HAL_CAN_CH2
+#define INTERNAL_CAN_CHANNEL HAL_CAN_CH1
+
+/* LED for heartbeat (Pico onboard LED is GPIO25) */
+#define LED_PIN           25
+
+/* ============================================================================
+ * GLOBAL STATE
+ * ============================================================================ */
+
+static chademo_context_t g_fsm_ctx;
+static uint32_t g_loop_count = 0;
+static uint32_t g_can_tx_count = 0;
+static uint32_t g_can_rx_count = 0;
+static uint32_t g_last_debug_print_ms = 0;
+
+/* ============================================================================
+ * FORWARD DECLARATIONS
+ * ============================================================================ */
+
+static void debug_init(void);
+static void debug_print_startup(void);
+static void debug_print_status(void);
+static void led_heartbeat(void);
+static void process_can_rx(void);
+static void process_can_tx(void);
+static void process_application_logic(void);
+
+/* ============================================================================
+ * ENTRY POINT
+ * ============================================================================ */
+
+int main(void)
+{
+    /* ---- Initialize Pico SDK ---- */
+    stdio_init_all();
+
+    /* ---- Initialize debug UART ---- */
+    debug_init();
+
+    /* ---- Startup banner ---- */
+    debug_print_startup();
+
+    /* ---- Initialize onboard LED ---- */
+    gpio_init(LED_PIN);
+    gpio_set_dir(LED_PIN, GPIO_OUT);
+    gpio_put(LED_PIN, 0);
+
+    /* ---- CRITICAL: Initialize GPIO to safe states BEFORE anything else ----
+     * This ensures contactor is OPEN and all control lines are de-asserted
+     * even if CAN initialization fails.
+     */
+    hal_gpio_init();
+    printf("[HAL] GPIO initialized — contactor OPEN, controls SAFE\r\n");
+
+    /* ---- Initialize watchdog ----
+     * If the main loop hangs for more than 500ms, the watchdog will reset
+     * the MCU, forcing all GPIOs back to safe defaults.
+     */
+    hal_watchdog_init(CHADEMO_Timing_WD_FEED_MS * 2);
+    printf("[WDT] Watchdog initialized (timeout: %d ms)\r\n",
+           CHADEMO_Timing_WD_FEED_MS * 2);
+
+    /* ---- Initialize CAN buses ---- */
+    printf("[CAN] Initializing CHAdeMO bus (CAN2 / SPI1)...\r\n");
+    if (!hal_can_init(CHADEMO_CAN_CHANNEL)) {
+        printf("[CAN] FATAL: CHAdeMO MCP2515 (CAN2) not responding!\r\n");
+        printf("[CAN] Check: SPI wiring, CS pin (GPIO%d), power to MCP2515\r\n",
+               PIN_CAN2_CS);
+        /* Flash LED rapidly to indicate fault */
+        while (1) {
+            gpio_put(LED_PIN, 1);
+            sleep_ms(100);
+            gpio_put(LED_PIN, 0);
+            sleep_ms(100);
+        }
+    }
+    printf("[CAN] CHAdeMO CAN initialized OK (500 kbps, %d MHz crystal)\r\n", MCP2515_OSC_MHZ);
+
+    /* CAN1 is optional — used for internal BMS/monitoring */
+    printf("[CAN] Initializing internal bus (CAN1 / SPI0)...\r\n");
+    if (!hal_can_init(INTERNAL_CAN_CHANNEL)) {
+        printf("[CAN] WARN: Internal CAN1 not responding — continuing without it\r\n");
+    } else {
+        printf("[CAN] Internal CAN1 initialized OK\r\n");
+    }
+
+    /* ---- Initialize CHAdeMO state machine ---- */
+    chademo_fsm_init(&g_fsm_ctx);
+    printf("[FSM] State machine initialized (role: %s)\r\n", FSM_ROLE_STR);
+
+    /* ---- Set initial battery parameters (VEHICLE role) ----
+     * In a real application, these come from the BMS via CAN.
+     * These are example values for a 96S Li-ion pack (~355V nominal).
+     */
+#if IS_VEHICLE
+    chademo_fsm_set_max_voltage(&g_fsm_ctx, 402);    /* 4.2V * 96 = 403.2V → 402V max */
+    chademo_fsm_set_target_voltage(&g_fsm_ctx, 355); /* 3.7V * 96 = 355.2V → target */
+    chademo_fsm_set_target_current(&g_fsm_ctx, 100); /* 100A max charge current */
+    chademo_fsm_set_capacity_kwh(&g_fsm_ctx, 400);   /* 40.0 kWh pack */
+    chademo_fsm_set_battery_soc(&g_fsm_ctx, 20);     /* Starting at 20% SOC */
+    printf("[BAT] Pack config: 96S Li-ion, 355V nom, 402V max, 40kWh\r\n");
+#else
+    /* STATION role: Set available output capability */
+    chademo_fsm_set_target_voltage(&g_fsm_ctx, 500);  /* 500V max output */
+    chademo_fsm_set_target_current(&g_fsm_ctx, 125);  /* 125A max output */
+    printf("[EVSE] Output capability: 500V, 125A (62.5 kW max)\r\n");
+#endif
+
+    printf("\r\n");
+    printf("============================================\r\n");
+    printf("  CHAdeMO Controller Ready\r\n");
+    printf("  Role: %s\r\n", FSM_ROLE_STR);
+    printf("  Version: %d.%d.%d\r\n",
+           FIRMWARE_VERSION_MAJOR, FIRMWARE_VERSION_MINOR, FIRMWARE_VERSION_PATCH);
+    printf("============================================\r\n\r\n");
+
+    /* ---- Main control loop (100 Hz) ---- */
+    absolute_time_t next_loop_time = get_absolute_time();
+
+    while (1) {
+        /* Calculate delta time for FSM */
+        uint32_t dt_ms = MAIN_LOOP_PERIOD_MS;
+
+        /* ---- 1. Process incoming CAN frames ---- */
+        process_can_rx();
+
+        /* ---- 2. Run the CHAdeMO state machine ---- */
+        chademo_event_t event = chademo_fsm_step(&g_fsm_ctx, dt_ms);
+
+        /* ---- 3. Handle significant FSM events ---- */
+        switch (event) {
+        case CHADEMO_EVENT_PLUG_INSERTED:
+            printf("[EVT] Plug inserted — starting CHAdeMO sequence\r\n");
+            break;
+
+        case CHADEMO_EVENT_HANDSHAKE_COMPLETE:
+            printf("[EVT] CAN handshake complete\r\n");
+            break;
+
+        case CHADEMO_EVENT_PARAMS_COMPATIBLE:
+            printf("[EVT] Parameters compatible — proceeding\r\n");
+            break;
+
+        case CHADEMO_EVENT_INSULATION_OK:
+            printf("[EVT] Insulation test passed\r\n");
+            break;
+
+        case CHADEMO_EVENT_PRECHARGE_OK:
+            printf("[EVT] Pre-charge complete — contactors closing\r\n");
+            break;
+
+        case CHADEMO_EVENT_CHARGING_STARTED:
+            printf("[EVT] CHARGING ACTIVE\r\n");
+            break;
+
+        case CHADEMO_EVENT_CHARGE_COMPLETE:
+            printf("[EVT] Charge complete — safe to unplug\r\n");
+            break;
+
+        case CHADEMO_EVENT_FAULT: {
+            const char *fault_name = chademo_fsm_fault_name(g_fsm_ctx.fault_reason);
+            printf("[EVT] FAULT: %s\r\n", fault_name);
+            break;
+        }
+
+        case CHADEMO_EVENT_UNPLUGGED:
+            printf("[EVT] Plug removed — returning to idle\r\n");
+            break;
+
+        default:
+            break;
+        }
+
+        /* ---- 4. Process outgoing CAN frames ---- */
+        process_can_tx();
+
+        /* ---- 5. Application-specific logic ----
+         * Here you would read ADCs for voltage/current, poll BMS,
+         * update display, log data, etc.
+         */
+        process_application_logic();
+
+        /* ---- 6. Feed watchdog ---- */
+        hal_watchdog_feed();
+
+        /* ---- 7. LED heartbeat ---- */
+        led_heartbeat();
+
+        /* ---- 8. Periodic debug output (every 1 second) ---- */
+        if (g_fsm_ctx.state_entry_ms - g_last_debug_print_ms >= 1000) {
+            g_last_debug_print_ms = g_fsm_ctx.state_entry_ms;
+            debug_print_status();
+        }
+
+        /* ---- 9. Maintain fixed loop rate ---- */
+        g_loop_count++;
+        next_loop_time = delayed_by_ms(next_loop_time, MAIN_LOOP_PERIOD_MS);
+        sleep_until(next_loop_time);
+    }
+
+    return 0;  /* Never reached */
+}
+
+/* ============================================================================
+ * CAN RX PROCESSING
+ * ============================================================================
+ * Poll both CAN channels for received frames and feed them to the FSM.
+ * In a higher-performance implementation, this would be interrupt-driven
+ * using the MCP2515 INT pin. For clarity, we use polling here.
+ */
+
+static void process_can_rx(void)
+{
+    chademo_can_frame_t frame;
+
+    /* Poll CHAdeMO bus (CAN2) */
+    while (hal_can_recv(CHADEMO_CAN_CHANNEL, &frame)) {
+        g_can_rx_count++;
+
+        /* Push into FSM for protocol processing */
+        chademo_fsm_push_can_rx(&g_fsm_ctx, &frame);
+
+        /* Optional: bridge to internal CAN1 for logging */
+        /* hal_can_send(INTERNAL_CAN_CHANNEL, &frame); */
+    }
+
+    /* Poll internal bus (CAN1) — BMS, display, or logging data */
+    while (hal_can_recv(INTERNAL_CAN_CHANNEL, &frame)) {
+        /* Internal bus frames */
+    }
+}
+
+/* ============================================================================
+ * CAN TX PROCESSING
+ * ============================================================================
+ * Pull frames from the FSM and transmit them at the required 100ms rate.
+ * Vehicle sends 3 frames (0x100, 0x101, 0x102) — one per 33ms = ~100ms cycle.
+ * Charger sends 2 frames (0x108, 0x109) — one per 50ms = ~100ms cycle.
+ */
+
+static void process_can_tx(void)
+{
+    static uint32_t last_tx_time = 0;
+
+    uint32_t now = hal_millis();
+    if ((now - last_tx_time) < CAN_TX_PERIOD_MS) {
+        return;  /* Not time to send yet */
+    }
+    last_tx_time = now;
+
+    /* Only send CAN frames when actively connected (avoid idle bus errors) */
+    if (g_fsm_ctx.state == CHADEMO_STATE_IDLE ||
+        g_fsm_ctx.state == CHADEMO_STATE_STOPPED) {
+        return;
+    }
+
+    chademo_can_frame_t frame;
+    if (chademo_fsm_pull_can_tx(&g_fsm_ctx, &frame)) {
+        if (hal_can_send(CHADEMO_CAN_CHANNEL, &frame)) {
+            g_can_tx_count++;
+        } else {
+            uint8_t txb0 = hal_can_read_reg(CHADEMO_CAN_CHANNEL, MCP2515_REG_TXB0CTRL);
+            printf("[CAN] TX blocked: TXB0CTRL=0x%02X (TXREQ=%d)\r\n",
+                   txb0, (txb0 >> 3) & 1);
+        }
+    }
+}
+
+/* ============================================================================
+ * APPLICATION LOGIC
+ * ============================================================================
+ * This is where you'd integrate:
+ *   - ADC readings for voltage/current measurement
+ *   - BMS CAN communication
+ *   - Temperature sensor polling
+ *   - Display updates
+ *   - Data logging to SD card
+ *
+ * The example below shows placeholder logic that simulates a charging
+ * profile. Replace with your actual hardware interfaces.
+ */
+
+static void process_application_logic(void)
+{
+    /* ---- Update measured values (placeholder -- replace with ADC reads) ----
+     * In a real implementation:
+     *   ctx->measured_voltage_V = adc_read_voltage();
+     *   ctx->measured_current_A = adc_read_current();  // negative = charging
+     *   ctx->battery_temp_C = bms_get_max_cell_temp();
+     *   ctx->battery_soc = bms_get_soc();
+     */
+
+    /* Example: simulated charge profile for testing without hardware */
+    static uint16_t sim_voltage = 280;  /* Starting at 280V */
+    static int16_t  sim_current = 0;    /* Starting at 0A */
+
+    if (g_fsm_ctx.state == CHADEMO_STATE_CHARGING) {
+        /* Simulate voltage rising toward target */
+#if IS_VEHICLE
+        uint16_t target_v = g_fsm_ctx.tx.h102.target_battery_voltage_V;
+#else
+        uint16_t target_v = g_fsm_ctx.tx.h108.avail_output_voltage_V;
+#endif
+        if (sim_voltage < target_v) {
+            sim_voltage++;
+        }
+
+        /* Simulate current following the request */
+        uint8_t target_a = g_fsm_ctx.asking_amps;
+        if (sim_current > -target_a) {
+            sim_current -= 2;  /* Ramping into battery (negative) */
+        }
+        if (sim_current < -target_a) {
+            sim_current = -target_a;
+        }
+    } else {
+        /* Not charging — current should be zero */
+        if (sim_current < 0) sim_current++;
+        if (sim_current > 0) sim_current--;
+    }
+
+    if (g_fsm_ctx.state == CHADEMO_STATE_SHUTDOWN ||
+        g_fsm_ctx.state == CHADEMO_STATE_WAIT_ZERO_CURRENT) {
+        sim_current = 0;
+    }
+
+    /* Feed simulated values into FSM */
+    chademo_fsm_set_measured_voltage(&g_fsm_ctx, sim_voltage);
+    chademo_fsm_set_measured_current(&g_fsm_ctx, sim_current);
+
+    /* ---- Auto-shutdown when SOC reaches 80% (example) ---- */
+    if (g_fsm_ctx.state == CHADEMO_STATE_CHARGING && g_fsm_ctx.battery_soc >= 80) {
+        printf("[APP] Target SOC reached (80%%) — requesting shutdown\r\n");
+        chademo_fsm_request_shutdown(&g_fsm_ctx);
+    }
+}
+
+/* ============================================================================
+ * DEBUG / DIAGNOSTICS
+ * ============================================================================ */
+
+static void debug_init(void)
+{
+    uart_init(DEBUG_UART, DEBUG_BAUDRATE);
+    gpio_set_function(DEBUG_UART_TX_PIN, GPIO_FUNC_UART);
+    gpio_set_function(DEBUG_UART_RX_PIN, GPIO_FUNC_UART);
+}
+
+static void debug_print_startup(void)
+{
+    printf("\r\n");
+    printf("╔══════════════════════════════════════════════════════════════╗\r\n");
+    printf("║      CHAdeMO DC Fast Charge Controller — RP2040              ║\r\n");
+    printf("║      Role: %-10s                                        ║\r\n", FSM_ROLE_STR);
+    printf("║      Version: %d.%d.%d                                         ║\r\n",
+           FIRMWARE_VERSION_MAJOR, FIRMWARE_VERSION_MINOR, FIRMWARE_VERSION_PATCH);
+    printf("╚══════════════════════════════════════════════════════════════╝\r\n");
+    printf("\r\n");
+}
+
+static void debug_print_mcp2515_diag(void)
+{
+    uint8_t eflg = hal_can_read_reg(CHADEMO_CAN_CHANNEL, MCP2515_REG_EFLG);
+    uint8_t tec  = hal_can_read_reg(CHADEMO_CAN_CHANNEL, 0x1C);
+    uint8_t rec  = hal_can_read_reg(CHADEMO_CAN_CHANNEL, 0x1D);
+    uint8_t intf = hal_can_read_reg(CHADEMO_CAN_CHANNEL, MCP2515_REG_CANINTF);
+    uint8_t txb0 = hal_can_read_reg(CHADEMO_CAN_CHANNEL, MCP2515_REG_TXB0CTRL);
+    uint8_t stat = hal_can_read_reg(CHADEMO_CAN_CHANNEL, MCP2515_REG_CANSTAT);
+
+    printf("[DIAG] EFLG=0x%02X TEC=%u REC=%u INTF=0x%02X TXB0=0x%02X STAT=0x%02X\r\n",
+           eflg, tec, rec, intf, txb0, stat);
+    if (eflg & 0x20) printf("[DIAG] >>> BUS OFF <<<\r\n");
+    if (eflg & 0x10) printf("[DIAG] TX error passive\r\n");
+    if (eflg & 0x08) printf("[DIAG] RX error passive\r\n");
+    if (eflg & 0x04) printf("[DIAG] TX error warning\r\n");
+    if (txb0 & 0x08) printf("[DIAG] TXB0 pending (stuck)\r\n");
+}
+
+static void debug_print_status(void)
+{
+    const char *state_name = chademo_fsm_state_name(g_fsm_ctx.state);
+
+    printf("[STAT] State=%s | V=%dV | I=%dA | SOC=%d%% | CAN rx/tx=%lu/%lu | Loop=%lu\r\n",
+           state_name,
+           g_fsm_ctx.measured_voltage_V,
+           g_fsm_ctx.measured_current_A,
+           g_fsm_ctx.battery_soc,
+           g_can_rx_count,
+           g_can_tx_count,
+           g_loop_count);
+
+    /* Print MCP2515 diagnostics every ~1 second */
+    if ((g_loop_count % 100) == 0) {
+        debug_print_mcp2515_diag();
+    }
+
+#if IS_VEHICLE
+    /* Show charger-reported values */
+    if (g_fsm_ctx.rx.h109_valid) {
+        printf("[CHRG] Avail=%dV/%dA | Present=%dV/%dA | Status=0x%02X | Time=%ds\r\n",
+               g_fsm_ctx.rx.h108.avail_output_voltage_V,
+               g_fsm_ctx.rx.h108.avail_output_current_A,
+               g_fsm_ctx.rx.h109.present_output_voltage_V,
+               g_fsm_ctx.rx.h109.present_output_current_A,
+               g_fsm_ctx.rx.h109.status,
+               (g_fsm_ctx.rx.h109.remaining_charge_time_10s != 0xFF)
+                   ? g_fsm_ctx.rx.h109.remaining_charge_time_10s * 10
+                   : g_fsm_ctx.rx.h109.remaining_charge_time_60s * 60);
+    }
+#else
+    /* Show EV-reported values */
+    if (g_fsm_ctx.rx.h102_valid) {
+        printf("[EV]   MaxV=%dV | Target=%dV/%dA | Fault=0x%02X | Status=0x%02X | SOC=%d%%\r\n",
+               g_fsm_ctx.rx.h100.max_battery_voltage_V,
+               g_fsm_ctx.rx.h102.target_battery_voltage_V,
+               g_fsm_ctx.rx.h102.charging_current_request_A,
+               g_fsm_ctx.rx.h102.fault,
+               g_fsm_ctx.rx.h102.status,
+               g_fsm_ctx.rx.h102.charged_rate_percent);
+    }
+#endif
+}
+
+/* ============================================================================
+ * LED HEARTBEAT
+ * ============================================================================
+ * Blink pattern indicates system state:
+ *   Slow blink (1Hz):   Idle, waiting for plug
+ *   Fast blink (4Hz):   Charging active
+ *   Solid ON:           Fault condition
+ *   Two quick blinks:   Handshake/pre-charge in progress
+ */
+
+static void led_heartbeat(void)
+{
+    static uint32_t led_timer = 0;
+    static bool led_state = false;
+
+    led_timer += MAIN_LOOP_PERIOD_MS;
+
+    uint32_t blink_period;
+
+    switch (g_fsm_ctx.state) {
+    case CHADEMO_STATE_CHARGING:
+        blink_period = 125;   /* 4 Hz fast blink */
+        break;
+    case CHADEMO_STATE_FAULT_SHUTDOWN:
+        gpio_put(LED_PIN, 1); /* Solid ON */
+        return;
+    case CHADEMO_STATE_HANDSHAKE:
+    case CHADEMO_STATE_PARAM_CHECK:
+    case CHADEMO_STATE_PRECHARGE:
+        blink_period = 250;   /* Medium blink */
+        break;
+    default:
+        blink_period = 1000;  /* 1 Hz slow blink */
+        break;
+    }
+
+    if (led_timer >= blink_period) {
+        led_timer = 0;
+        led_state = !led_state;
+        gpio_put(LED_PIN, led_state ? 1 : 0);
+    }
+}
+
+/* ============================================================================
+ * SDK BINARY INFO (visible to picotool)
+ * ============================================================================ */
+
+bi_decl(bi_program_name("CHAdeMO Controller for RP2040"));
+bi_decl(bi_program_version_string("1.0.0"));
+bi_decl(bi_program_description("CHAdeMO DC Fast Charging Protocol Controller"));
+bi_decl(bi_program_url("https://github.com/"));
+bi_decl(bi_1pin_with_name(PIN_CONTACTOR_OUT, "CONTACTOR"));
+bi_decl(bi_1pin_with_name(PIN_CAN1_CS, "CAN1_CS"));
+bi_decl(bi_1pin_with_name(PIN_CAN2_CS, "CAN2_CS"));
