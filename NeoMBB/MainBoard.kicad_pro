@@ -48,7 +48,7 @@
         "silk_text_thickness": 0.1,
         "silk_text_upright": false,
         "zones": {
-          "min_clearance": 0.7
+          "min_clearance": 0.85
         }
       },
       "diff_pair_dimensions": [
@@ -645,32 +645,52 @@
       "Root"
     ],
     [
-      "25e7225d-2b67-4473-ba3a-12fa4ef2846b",
+      "1135c087-564f-4fe0-8c47-bc02a6505b92",
       "Isolated Canbus Module"
     ],
     [
-      "dc984b68-1368-4f2d-bb75-cbabc505e1fc",
+      "3d483e19-b869-4ac1-9bae-5271674eee59",
       "Isolated Canbus Module1"
     ],
     [
-      "10afe1c8-89e7-418d-b1c1-5754e617806c",
+      "4985081c-41f0-49fc-9e1c-7efa9157b988",
       "Isolated Canbus Module2"
     ],
     [
-      "06ebabe3-703a-45fb-87ef-421e54132c53",
+      "e4aee150-d654-451a-a6ea-28416e0dceda",
       "Isolated Canbus Module3"
     ],
     [
-      "055b452d-0acb-4ee0-a90c-5ae9039450a7",
-      "VoltageSenseInputStage_Quad1"
+      "79482b95-0f8c-49fb-a902-ad23963f320d",
+      "Control"
     ],
     [
-      "a6bc4d0e-e0b8-4159-a91c-7c1926c3dfc5",
-      "HighSideOutputs"
+      "a783b71e-fb26-43e1-8d8a-d1b86d04190d",
+      "Power"
     ],
     [
-      "bfdf1e33-829d-49c4-b2e1-db6908e499f7",
-      "VoltageSenseInputStage_Quad"
+      "6825b563-9008-45ff-8d8e-abbb9e38afef",
+      "Charger Interface"
+    ],
+    [
+      "599d9771-b0ad-477c-adb6-7c56a6d5d301",
+      "Dash Interface"
+    ],
+    [
+      "cc9c59ba-107c-4db6-b28e-12b6961a3e66",
+      "High Voltage Interlock"
+    ],
+    [
+      "d4c17d3f-1bd6-4eec-9a39-110d2a2622f9",
+      "ABS Interface"
+    ],
+    [
+      "6846b2c5-4fe7-4f4b-a423-6d46b655fab7",
+      "Sensor IO"
+    ],
+    [
+      "8b015847-e782-44f3-969f-b0060dbb8884",
+      "Inverter Interface"
     ]
   ],
   "text_variables": {}
